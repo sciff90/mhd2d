@@ -21,9 +21,9 @@ drive0		= 10.0e-9             	; amplitude of driver (T)
 Freq  		= 0.010					; Frequency of driver (in Hz)
 
 ;	Directories
-Pth			= '/media/Raid_Data/Data/mhd2d/idl/data/'					; Directory for data file
-out_pth		= '/media/Raid_Data/Data/mhd2d/idl/plots/'					; Directiory for images
-inp_pth		= '../iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
+Pth			= 'C:\Data\2D_Faligned\Pulse_80km_NewVa\'					; Directory for data file
+out_pth		= 'C:\Data\2D_Faligned\Pulse_80km_NewVa\'					; Directiory for images
+inp_pth		= 'C:\Data\2D_Faligned\Ionosphere\'				; Directory for Ionopsheric data (eg. Conductances etc)
 Neutral_file= inp_pth+'NeutralAtm_Min_Mod.txt'					; Neutral Atmosphere File
 plot_png 	= 1												; 1= plot png files
 Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
