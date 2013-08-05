@@ -21,9 +21,9 @@ drive0		= 10.0e-9             	; amplitude of driver (T)
 Freq  		= 0.010					; Frequency of driver (in Hz)
 
 ;	Directories
-Pth			= '/media/Raid_Data/Data/mhd2d/idl/data/'					; Directory for data file
-out_pth		= '/media/Raid_Data/Data/mhd2d/idl/plots/'					; Directiory for images
-inp_pth		= '../iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
+Pth			= '/home/gareths/Data/mhd2d/idl/data/'					; Directory for data file
+out_pth		= '/home/gareths/Data/mhd2d/idl/plots/'					; Directiory for images
+inp_pth		= '/home/gareths/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
 Neutral_file= inp_pth+'NeutralAtm_Min_Mod.txt'					; Neutral Atmosphere File
 plot_png 	= 1												; 1= plot png files
 Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
@@ -330,7 +330,6 @@ hphiatm_S 	= r_iono*sinth[*,Num_u3-1]
 hthg_S 		= hthatm_S/r_iono
 hphig_S		= hphiatm_S/r_iono
 
-set_plot,'win'
 device,decomposed=0
 ;loadct,0
 !p.multi=0
@@ -349,7 +348,6 @@ begin
  Write_PNG,filename,image,r,g,b
 end
 
-set_plot,'win'
 device,decompose=0
 window,1,Title='Title Grid',Xsize=1200,Ysize=700
 !P.multi=[0,4,3]
@@ -996,7 +994,6 @@ e2b2atm_S = sig21/sigden
 
 
 
-set_plot,'win'
 device,decomposed=0
 !p.multi=0
 window,5,xsize=800,ysize=800,title='Va Profile'
@@ -1061,7 +1058,7 @@ begin
  Write_PNG,filename,image,r,g,b
 end
 
-set_plot,'win'
+
 device,decomposed=0
 !p.multi=0
 window,15,xsize=1200,ysize=600,title='Electron Profile'
@@ -1112,7 +1109,7 @@ begin
 end
 
 
-set_plot,'win'
+
 device,decompose=0
 window,2,Title='Conductances',Xsize=1200,Ysize=900
 !P.multi=[0,3,4]
@@ -1269,7 +1266,7 @@ Pro Get_Facts,	sigp_arr, sigh_arr, eps_arr, eta_arr, g11, g22, g33, g13, gsup11,
 
 
 
-set_plot,'win'
+
 device,decompose=0
 window,24,Title='Factors',Xsize=1500,Ysize=500
 !P.multi=[0,3,1]
@@ -1834,7 +1831,7 @@ emu(0,*) = 0.0 & emu(Num_u1-1,*) = 0.0 & emu(*,0) = 0.0 & emu(*,Num_u3-1) = 0.0
 
 
 
-set_plot,'win'
+
 device,decomposed=0
 ;loadct,4,/silent
 window,6,xsize=1200,ysize=800,title='Fields time = '+StrTrim(t,2)+' '+StrTrim(iplot)

@@ -12,30 +12,30 @@ OBJECTS = ${OBJ}/global.o\
 #Define Compiler
 
 #############ifort############
-#COMP = ifort
+COMP = ifort
 	
 #Define Switches
-#SWITCH = -O2 -module${MOD}
-#SWITCH = -g -debug-parameters
+#SWITCH = -O2 -module ${MOD}
+SWITCH = -g -debug-parameters -module ${MOD}
 
 #Define Libraries
-#LIB_DIR = -L lib/ifort
-#LIB = -llapack -lblas
+LIB_DIR = -L lib/ifort
+LIB = -llapack -lblas
 
 ##############################
 
 
 #############gfortran############
-COMP = gfortran
+#COMP = gfortran
 	
 #Define Switches
 #SWITCH = -O2 -J${MOD}
-SWITCH = -g -J${MOD}
+#SWITCH = -g -J${MOD}
 
 #Define Libraries
 
-LIB_DIR = -L lib/gfortran
-LIB = -llapack -lblas
+#LIB_DIR = -L lib/gfortran
+#LIB = -llapack -lblas
 
 ##############################
 
