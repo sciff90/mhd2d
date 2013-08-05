@@ -89,7 +89,7 @@ Z = Z + Bzunit*DelS
 Npts++
 
 ENDREP UNTIL Z  le 0.0 ;OR sqrt( X^2  + Z^2 ) gt 100.0 ;
-
+stop
 Sn 			= Double(Npts-1)*ABS(DelS)
 
 num_u3_half	= (floor(2.0*sn/(dsn)))								;
@@ -275,7 +275,7 @@ OuterLength 	= Total(DelS,/cumulative)
 
 Print,'Grid Spacing dsi = ',dsi/1.0e3,' km'
 print,'min spacing in u3', min(abs(d32*h3))*Re/1.0e3,' km'
-;stop
+stop
 
 end			; end of Gen_grid
 
