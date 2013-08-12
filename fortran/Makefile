@@ -8,7 +8,9 @@ EXEC = xmhd2d
 
 OBJECTS = ${OBJ}/global.o\
 			${OBJ}/main.o\
-			${OBJ}/gen_grid.o			
+			${OBJ}/gen_grid.o\
+			${OBJ}/get_Va.o
+
 #Define Compiler
 
 #############ifort############
@@ -49,9 +51,12 @@ ${OBJ}/global.o: ${SRC}/global.f90
 	
 ${OBJ}/main.o: ${MOD}/global.mod ${SRC}/main.f90
 	$(COMP) -c $(SWITCH) ${SRC}/main.f90 -o ${OBJ}/main.o
+
 ${OBJ}/gen_grid.o: ${MOD}/global.mod ${SRC}/gen_grid.f90
 	$(COMP) -c $(SWITCH) ${SRC}/gen_grid.f90 -o ${OBJ}/gen_grid.o
 
+${OBJ}/get_Va.o: ${MOD}/global.mod ${SRC}/gen_grid.f90 ${SRC}/get_Va.f90
+	$(COMP) -c $(SWITCH) ${SRC}/get_Va.f90 -o ${OBJ}/get_Va.o
 clean:
 	rm ${OBJ}/*.o
 	rm ${MOD}/*.mod

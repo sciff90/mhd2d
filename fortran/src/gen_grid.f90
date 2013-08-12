@@ -15,16 +15,16 @@ subroutine gen_grid()
     !Variables
     real :: X,Z,r,Lat,Bx,Bz,Bx_unit,Bz_unit,d3
     real:: Sn,dsi,ccosth0,numin,numax,del_u1 
-    integer :: num_u3_half,num_u3,ii,jj,temp
+    integer :: ii,jj,temp
     integer*4 :: Npts
     !Arrays
     real,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth 
     real,dimension(:),allocatable :: mu,u1,rinit,dmudx0
     real,dimension(:),allocatable :: hratm_N,hthatm_N,hphiatm_N,hthg_N,hphig_N
     real,dimension(:),allocatable :: hratm_S,hthatm_S,hphiatm_S,hthg_S,hphig_S
-    real,dimension(:,:),allocatable :: r_arr,sinth2,sinth02,costh,dmudx,costh02
-    real,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth,x_arr,y_arr
-    real,dimension(:,:),allocatable :: bfac,bsqrt,z_arr
+    real,dimension(:,:),allocatable :: sinth2,sinth02,dmudx,costh02
+    real,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
+    real,dimension(:,:),allocatable :: bfac,bsqrt
     real,dimension(:,:),allocatable :: g11,gsup11,g22,gsup22,g33,g13,gsup33,gsup13 
     real,dimension(:,:),allocatable :: h1,h2,h3,h30,jac
 

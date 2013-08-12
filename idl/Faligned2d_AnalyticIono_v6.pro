@@ -753,7 +753,7 @@ For rr=1,Pt do begin $
  ReadF,u,y1,y2,y3,y4
 Neutral(rr,0) = y1 & Neutral(rr,1)= y2 & Neutral(rr,2) = y3 & Neutral(rr,3) = y4
 end
-Neutral(rr  ,0) = 0.     & Neutral(0,1) = Neutral(1  ,1)  & Neutral(0,2) = Neutral(1,2) & Neutral(0,3) = Neutral(1,3)
+Neutral(0  ,0) = 0.     & Neutral(0,1) = Neutral(1  ,1)  & Neutral(0,2) = Neutral(1,2) & Neutral(0,3) = Neutral(1,3)
 Neutral(rr  ,0) = 3000.  & Neutral(rr  ,1)= y2 & Neutral(rr  ,2) = y3 & Neutral(rr  ,3) = y4*exp(-(Neutral(rr  ,0)-Neutral(Pt,0))/ScleHt)
 Neutral(rr+1,0) = 4000.	 & Neutral(rr+1,1)= y2 & Neutral(rr+1,2) = y3 & Neutral(rr+1,3) = y4*exp(-(Neutral(rr+1,0)-Neutral(Pt,0))/ScleHt)
 Neutral(rr+2,0) = 5000.	 & Neutral(rr+2,1)= y2 & Neutral(rr+2,2) = y3 & Neutral(rr+2,3) = y4*exp(-(Neutral(rr+2,0)-Neutral(Pt,0))/ScleHt)

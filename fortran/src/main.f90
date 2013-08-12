@@ -6,7 +6,7 @@ program main
        real total
 
        call gen_grid()
-       !call gen_va()
+       call get_va()
        !call gen_basisFn()
        !call gen_numfactors()
        !call iterate()

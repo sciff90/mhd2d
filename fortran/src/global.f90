@@ -35,4 +35,11 @@ module global
       real,parameter :: re2 = re**2              !Re^2
       complex,parameter :: im = (0,m)
 
+      !Global Variables
+      integer :: num_u3,num_u3_half
+
+      !Global Arrays
+      real,dimension(:,:),allocatable :: x_arr,y_arr,z_arr,r_arr
+      real,dimension(:,:),allocatable :: costh
+
 end module
