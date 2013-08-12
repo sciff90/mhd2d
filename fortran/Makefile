@@ -29,8 +29,8 @@ LIB = -llapack -lblas
 #COMP = gfortran
 	
 #Define Switches
-#SWITCH = -O2 -J${MOD}
-#SWITCH = -g -J${MOD}
+#SWITCH = -O2 -J ${MOD}
+#SWITCH = -g -J ${MOD}
 
 #Define Libraries
 

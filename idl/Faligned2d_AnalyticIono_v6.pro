@@ -224,6 +224,7 @@ y			= dblarr(num_u3)
 y[0]		= CosCLat(0)
 for i=1,num_u3_half-1 do begin
  ii				= max(where(ss lt s[i]))
+ print,ii
  y[i]			= CosCLat[ii]+(CosCLat[ii]-CosCLat[ii-1])*(s[i]-ss[ii])/(ss[ii]-ss[ii-1])
  y[num_u3-1-i]	= -y[i]       					;	fill other hemis
 endfor

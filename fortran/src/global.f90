@@ -16,7 +16,7 @@ module global
       real,parameter :: Lval = 6.0      !conoical L value
       real,parameter :: LMin = 2.0      !min L
       real,parameter :: LMax = 10.0     !max L
-      real,parameter :: num_u1 = 151    !number of field lines
+      integer,parameter :: num_u1 = 151    !number of field lines
       real,parameter :: Re = 6378.388e3 !Re in metres
       real,parameter :: z0 = 80.0e3     !height of ionospheric thin sheet current (in) m
       !real,parameter :: ds0 = 5.0e3    !grid spacing (along cononical field line) at z0 (in m)
