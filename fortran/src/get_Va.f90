@@ -1,5 +1,5 @@
 subroutine get_Va()
-        
+        use interpolation
         use global
         implicit none
         
@@ -19,6 +19,7 @@ subroutine get_Va()
         !Data File Variables
         integer,parameter :: pt = 29  
         real,dimension(0:pt+5,0:3):: neutral
+
         real::SclHt
 
         !Parameters
@@ -151,8 +152,16 @@ subroutine get_Va()
                    neutral(jj+ii,2) = neutral(ii-1,2)
                    neutral(jj+ii,3)= neutral(ii-1,3)*exp(-(neutral(ii-1+jj,0)-neutral(pt,0))/SclHt)
            end do
-           write(*,*) 'output = ' ,neutral(:,0)
-           write(*,*) 'output = ' ,neutral(:,1)                     
-           write(*,*) 'output = ' ,neutral(:,2)
-           write(*,*) 'output = ' ,neutral(:,3)
+
+           neutral(0,0) = 0
+          
+           do ii = 0, Num_u1-1
+
+                call quad_inter(neutral(:,3),neutral(:,0)*1.0e3,z_arr(ii,:),No_N(ii,:))
+                call quad_inter(neutral(:,2),neutral(:,0)*1.0e3,z_arr(ii,:),Mav(ii,:))
+                call quad_inter(neutral(:,1),neutral(:,0)*1.0e3,z_arr(ii,:),Temp(ii,:))               
+
+           end do
+
+
 end subroutine get_Va

@@ -9,7 +9,8 @@ EXEC = xmhd2d
 OBJECTS = ${OBJ}/global.o\
 			${OBJ}/main.o\
 			${OBJ}/gen_grid.o\
-			${OBJ}/get_Va.o
+			${OBJ}/get_Va.o\
+			${OBJ}/interpolation.o
 
 #Define Compiler
 
@@ -55,8 +56,11 @@ ${OBJ}/main.o: ${MOD}/global.mod ${SRC}/main.f90
 ${OBJ}/gen_grid.o: ${MOD}/global.mod ${SRC}/gen_grid.f90
 	$(COMP) -c $(SWITCH) ${SRC}/gen_grid.f90 -o ${OBJ}/gen_grid.o
 
-${OBJ}/get_Va.o: ${MOD}/global.mod ${SRC}/gen_grid.f90 ${SRC}/get_Va.f90
+${OBJ}/get_Va.o: ${MOD}/global.mod ${SRC}/gen_grid.f90 ${SRC}/get_Va.f90 ${SRC}/interpolation.f90
 	$(COMP) -c $(SWITCH) ${SRC}/get_Va.f90 -o ${OBJ}/get_Va.o
+
+${OBJ}/interpolation.o: ${SRC}/interpolation.f90
+	$(COMP) -c $(SWITCH) ${SRC}/interpolation.f90 -o ${OBJ}/interpolation.o
 clean:
 	rm ${OBJ}/*.o
 	rm ${MOD}/*.mod
