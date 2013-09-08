@@ -10,11 +10,11 @@ subroutine gen_grid()
     real,parameter :: Lat0 = asin(cosColat0)
     real,parameter :: ColLat0 = acos(cosColat0)
     real,parameter :: DelS = -0.1e3 !approx 100m spacing. Step along field line (- going outwards from northern hemisphere)
-    real,parameter :: d32 = 2.0 !"spacing" between the k+1 and k-1 points in the u3 direction
+    
 
     !Variables
     real :: X,Z,r,Lat,Bx,Bz,Bx_unit,Bz_unit,d3
-    real:: Sn,dsi,ccosth0,numin,numax,del_u1 
+    real:: Sn,dsi,ccosth0,numin,numax 
     integer :: ii,jj,temp
     integer*4 :: Npts
     !Arrays
@@ -26,7 +26,7 @@ subroutine gen_grid()
     real,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
     real,dimension(:,:),allocatable :: bfac,bsqrt
     real,dimension(:,:),allocatable :: g11,gsup11,g22,gsup22,g33,g13,gsup33,gsup13 
-    real,dimension(:,:),allocatable :: h1,h2,h3,h30,jac
+    real,dimension(:,:),allocatable :: h30,jac
 
     !start grid_gen
     X = r0*cos(Lat0)    
@@ -192,7 +192,7 @@ subroutine gen_grid()
     costh2(:,:) = 1.0-sinth2(:,:)
     costh(:,0:num_u3_half-1) = sqrt(costh2(:,0:num_u3_half-1))
     !Northern Hemisphere
-    costh(:,num_u3_half:num_u3_half-1) = -1.0*sqrt(costh2(:,num_u3_half:num_u3-1))
+    costh(:,num_u3_half:num_u3-1) = -1.0*sqrt(costh2(:,num_u3_half:num_u3-1))
     !Southern Hemisphere
     sinth(:,:) = sqrt(sinth2(:,:))  !theta only runs 0<x<pi so sin(theta) > 0
 
@@ -207,7 +207,7 @@ subroutine gen_grid()
     Allocate(dmudx0(0:num_u3-1))
     dmudx0(:) = (cshift(mu,shift = 1,dim = 1)-cshift(mu,shift=-1,dim = 1))/d32
     dmudx0(0) = (-3.0*mu(0)+4.0*mu(1)-mu(2))/d32 !backwards difference
-    dmudx0(num_u3-1) = (-3.0*mu(num_u3-1)-4.0*mu(num_u3-2)+mu(num_u3-3))/d32    !forward difference
+    dmudx0(num_u3-1) = (3.0*mu(num_u3-1)-4.0*mu(num_u3-2)+mu(num_u3-3))/d32    !forward difference
 
     do ii = 0, num_u3-1
             dmudx(:,ii) = dmudx0(ii)
@@ -314,3 +314,4 @@ subroutine New_r(r0,u1,u3,costh02,RI,ans,num_u3_half)
     
 
 end subroutine New_r
+

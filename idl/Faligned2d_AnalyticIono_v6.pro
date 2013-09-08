@@ -21,9 +21,9 @@ drive0		= 10.0e-9             	; amplitude of driver (T)
 Freq  		= 0.010					; Frequency of driver (in Hz)
 
 ;	Directories
-Pth			= '/home/gareths/Data/mhd2d/idl/data/'					; Directory for data file
-out_pth		= '/home/gareths/Data/mhd2d/idl/plots/'					; Directiory for images
-inp_pth		= '/home/gareths/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
+Pth			= '/media/Raid_Data/Data/mhd2d/idl/data/'					; Directory for data file
+out_pth		= '/media/Raid_Data/Data/mhd2d/idl/plots/'					; Directiory for images
+inp_pth		= '/media/Raid_Data/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
 Neutral_file= inp_pth+'NeutralAtm_Min_Mod.txt'					; Neutral Atmosphere File
 plot_png 	= 1												; 1= plot png files
 Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
@@ -765,9 +765,9 @@ Free_Lun,u
 
 For ii = 0,Num_u1-1 do begin
 
-Fline_No_N 	= INTERPOL( Neutral(*,3), Neutral(*,0)*1.0e3, z_arr(ii,*))
-Fline_Mav 	= INTERPOL( Neutral(*,2), Neutral(*,0)*1.0e3, z_arr(ii,*))
-Fline_Temp 	= INTERPOL( Neutral(*,1), Neutral(*,0)*1.0e3, z_arr(ii,*))
+Fline_No_N 	= INTERPOL( Neutral(*,3), Neutral(*,0)*1.0e3, z_arr(ii,*),/QUADRATIC)
+Fline_Mav 	= INTERPOL( Neutral(*,2), Neutral(*,0)*1.0e3, z_arr(ii,*),/QUADRATIC)
+Fline_Temp 	= INTERPOL( Neutral(*,1), Neutral(*,0)*1.0e3, z_arr(ii,*),/QUADRATIC)
 
 No_N(ii,*)	= Fline_No_N
 Mav(ii,*)	= Fline_Mav
@@ -2053,7 +2053,6 @@ Env			= exp(-((t-2.0/Width)*Width)^2.)
 Dnorm		= 5.0
 Decay		= 5.0
 tdep		= t/DNorm*(1.0-t/DNorm)*Exp(-Decay*t/Dnorm)*2*Dnorm
-
 
 ;	The Driver
 Driver				= Amp*spatial*tdep

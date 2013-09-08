@@ -22,6 +22,7 @@ module global
       !real,parameter :: ds0 = 5.0e3    !grid spacing (along cononical field line) at z0 (in m)
       real,parameter :: dsn = 500.0e3   !grid spacing (along cononical field line) at rtop (in m)
       real,parameter :: modefrac = 0.2  !fraction (of gridpoints in u1) to use as basis function in atmospheric expansions
+      real,parameter :: d32 = 2.0 !"spacing" between the k+1 and k-1 points in the u3 direction
 
       !constants
       real,parameter :: pi = 3.141592
@@ -37,9 +38,12 @@ module global
 
       !Global Variables
       integer :: num_u3,num_u3_half
+      real :: del_u1
 
       !Global Arrays
       real,dimension(:,:),allocatable :: x_arr,y_arr,z_arr,r_arr
       real,dimension(:,:),allocatable :: costh
+      !Grid Arrays
+      real,dimension(:,:),allocatable :: h3,h1,h2
 
 end module
