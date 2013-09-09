@@ -7,7 +7,8 @@ program main
 
        call gen_grid()
        call get_va()
-       !call gen_basisFn()
+       call get_facts()
+       call get_basisfn()
        !call gen_numfactors()
        !call iterate()
 

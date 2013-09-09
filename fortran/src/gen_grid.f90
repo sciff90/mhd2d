@@ -19,14 +19,12 @@ subroutine gen_grid()
     integer*4 :: Npts
     !Arrays
     real,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth 
-    real,dimension(:),allocatable :: mu,u1,rinit,dmudx0
-    real,dimension(:),allocatable :: hratm_N,hthatm_N,hphiatm_N,hthg_N,hphig_N
-    real,dimension(:),allocatable :: hratm_S,hthatm_S,hphiatm_S,hthg_S,hphig_S
+    real,dimension(:),allocatable :: mu,rinit,dmudx0
     real,dimension(:,:),allocatable :: sinth2,sinth02,dmudx,costh02
     real,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
-    real,dimension(:,:),allocatable :: bfac,bsqrt
-    real,dimension(:,:),allocatable :: g11,gsup11,g22,gsup22,g33,g13,gsup33,gsup13 
-    real,dimension(:,:),allocatable :: h30,jac
+    real,dimension(:,:),allocatable :: bfac
+    real,dimension(:,:),allocatable :: gsup22,gsup33 
+    real,dimension(:,:),allocatable :: h30
 
     !start grid_gen
     X = r0*cos(Lat0)    

@@ -21,9 +21,9 @@ drive0		= 10.0e-9             	; amplitude of driver (T)
 Freq  		= 0.010					; Frequency of driver (in Hz)
 
 ;	Directories
-Pth			= '/media/Raid_Data/Data/mhd2d/idl/data/'					; Directory for data file
-out_pth		= '/media/Raid_Data/Data/mhd2d/idl/plots/'					; Directiory for images
-inp_pth		= '/media/Raid_Data/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
+Pth			= '/home/gareths/Data/mhd2d/idl/data/'					; Directory for data file
+out_pth		= '/home/gareths/Data/mhd2d/idl/plots/'					; Directiory for images
+inp_pth		= '/home/gareths/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
 Neutral_file= inp_pth+'NeutralAtm_Min_Mod.txt'					; Neutral Atmosphere File
 plot_png 	= 1												; 1= plot png files
 Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
@@ -555,7 +555,7 @@ psigcoef	= b3coef*psifacg
 psiib3_N	= ev # psiicoef   			;	now b3b3 should be nxp1 x nxp1 unit matrix
 psigb3_N	= ev # psigcoef
 
-set_plot,'win'
+;set_plot,'win'
 device,decomposed=0
 ;loadct,4
 !p.multi=[0,1,2]

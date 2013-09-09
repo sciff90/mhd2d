@@ -10,12 +10,20 @@ subroutine get_Va()
         real,dimension(0:num_u1-1):: xd,tanhm,tterm,va_sp,b_eq,nH
         real,dimension(0:num_u1-1,0:num_u3-1) :: Ne_cc,Nu_ei,Nu_en,Nu_in,Nu_e,Nu_i,lambda
         real,dimension(0:num_u1-1) :: Thick_Sd,Thick_Sh,Thick_Sp 
-        real,dimension(0:num_u1-1,0:num_u3-1) :: V_arr,Coll_Mod,Eperp,eps_arr,Wave_sp,Va_arr,Va2_arr
+        real,dimension(0:num_u1-1,0:num_u3-1) :: V_arr,Coll_Mod,Eperp,Wave_sp,Va_arr
         real,dimension(0:num_u1-1,0:Num_u3-1) :: courx,courz
         integer,dimension(0:1) :: i_loc
+        !real,dimension(0:num_u1-1,0:7) :: flr_a
+
+        real,dimension(0:num_u1-1) :: cosalpha_N,sin2alpha_N,cosalpha_S,sin2alpha_S
+        real,dimension(0:num_u1-1) :: musigp,musigh,musig0,musigzz
+        real,dimension(0:num_u1-1) :: sigtt,sigtp,sigpt,sigpp
+        real,dimension(0:num_u1-1) :: sig11,sig12,sig21,sig22,sigden
+        real,dimension(0:num_u1-1) :: e1b1atm_N,e1b2atm_N,e2b1atm_N,e2b2atm_N
+        real,dimension(0:num_u1-1) :: e1b1atm_S,e1b2atm_S,e2b1atm_S,e2b2atm_S
+
 
         !Ionospheric Data File Arrays
-        real,dimension(0:num_u1-1,0:num_u3-1) :: sigp_arr,sigh_arr,sig0_arr,eta_arr
         real,dimension(0:num_u1-1,0:num_u3-1) :: No_N,Mav,Temp
         complex,dimension(0:num_u1-1) :: sigpatm_N,sighatm_N,sig0atm_N
         complex,dimension(0:num_u1-1) :: sigpatm_S,sighatm_S,sig0atm_S
@@ -43,9 +51,13 @@ subroutine get_Va()
          !Variables
          real :: Plaw,Ne_E,Alt_E,Esht_t,Esht_b,Ne_F1,Alt_F1,F1sht_t,F1sht_b
          real :: Ne_F2,Alt_F2,F2sht_t,F2sht_b,X
-         real :: Scale_Sd,Scale_Sh,Scale_Sp,Tol,dtx,dtz,dty,dt 
-         real :: nt,dtxmax,dtzmax,cmax,cmaz
+         real :: Scale_Sd,Scale_Sh,Scale_Sp,Tol,dtx,dtz,dty 
+         real :: nt,dtxmax,dtzmax,cmax,cmaz,musigfac
          integer :: i1x,i1z,i3x,i3z
+
+         !Allocations
+         allocate(eps_arr(0:num_u1-1,0:Num_u3-1))
+         allocate(va2_arr(0:num_u1-1,0:Num_u3-1))
          
          !Magnetic Field Strength
          do ii = 0, num_u3-1
@@ -195,6 +207,11 @@ subroutine get_Va()
            lambda = sqrt(Me/(4.0*pi*1.0e-7*No_tot*q_e**2))
 
            !Conductivities from 1D code
+           allocate(sig0_arr(0:num_u1-1,0:Num_u3-1))
+           allocate(sigp_arr(0:num_u1-1,0:Num_u3-1))
+           allocate(sigh_arr(0:num_u1-1,0:Num_u3-1))
+           allocate(eta_arr(0:num_u1-1,0:Num_u3-1))
+
            sig0_arr = No_tot*(q_e**2/(Me*Nu_e) + q_i**2/(Mp*Nu_i))        !from 1D code
            sigp_arr = (No_tot*q_i**2/(Mp))* (Nu_i)/((Nu_i)**2+omega_p**2) + (No_tot*q_e**2/(Me))* (Nu_e)/((Nu_e)**2+omega_e**2)
            sigh_arr = -( (No_tot*q_i**2/(Mp))* (omega_p)/((Nu_i)**2+omega_p**2) + (No_tot*q_e**2/(Me))* (omega_e)/((Nu_e)**2+omega_e**2) )
@@ -309,10 +326,63 @@ subroutine get_Va()
 
            write(*,*)"num_u1 x nzp1 x nt = ",num_u1*num_u3*nt
            write(*,*)"Max travel time between grid points u1,u3 directions = ",dtxmax,dtzmax
-           write(*,*) "****************************************************"
+           write(*,*) "****************************************************"    
 
 
+           !factors involving conductances in the numerics of thin sheet current sheet
+           !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           
+           !musigfac gives muSig in s/Re for 1 mho
+           musigfac = u0_u*Re
+           
+           !For Northern Hemipshere
+           cosalpha_N = -2.0*costh(:,0)/bsqrt(:,0) !set as postive for now, costh0 only goes 0< x < 90 deg
+           sin2alpha_N = 1.0 - cosalpha_N*cosalpha_N
+           musigp  = sigpatm_N*musigfac
+           musigh  = sighatm_N*musigfac
+           musig0  = sig0atm_N*musigfac
+           
+           musigzz = musig0 + (musigp-musig0)*sin2alpha_N
+           sigtt   = musig0*musigp/musigzz
+           sigtp   =-musig0*musigh*cosalpha_N/musigzz
+           sigpt   = musig0*musigh*cosalpha_N/musigzz
+           sigpp   = musigp + musigh*musigh*sin2alpha_N/musigzz
+           
+           sig11   = sigtt*hphiatm_N/hthatm_N
+           sig12   = sigtp
+           sig21   = sigpt
+           sig22   = sigpp*hthatm_N/hphiatm_N
+           sigden  = sig11*sig22-sig12*sig21
 
+           e1b1atm_N =-sig12/sigden
+           e1b2atm_N =-sig22/sigden
+           e2b1atm_N = sig11/sigden
+           e2b2atm_N = sig21/sigden
+
+           !For southern Hemipshere
+           cosalpha_S  = -2.0*costh(:,Num_u3-1)/bsqrt(:,Num_u3-1)
+           sin2alpha_S  = 1.0 - cosalpha_S*cosalpha_S
+
+           musigp = sigpatm_S*musigfac
+           musigh = sighatm_S*musigfac
+           musig0 = sig0atm_S*musigfac
+
+           musigzz = musig0 + (musigp-musig0)*sin2alpha_S
+           sigtt = musig0*musigp/musigzz
+           sigtp =-musig0*musigh*cosalpha_S/musigzz
+           sigpt = musig0*musigh*cosalpha_S/musigzz
+           sigpp = musigp + musigh*musigh*sin2alpha_S/musigzz
+
+           sig11 = sigtt*hphiatm_S/hthatm_S
+           sig12 = sigtp
+           sig21 = sigpt
+           sig22 = sigpp*hthatm_S/hphiatm_S
+           sigden = sig11*sig22-sig12*sig21
+
+           e1b1atm_S =-sig12/sigden
+           e1b2atm_S =-sig22/sigden
+           e2b1atm_S = sig11/sigden
+           e2b2atm_S = sig21/sigden
                           
 
 end subroutine get_Va

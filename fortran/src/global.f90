@@ -1,5 +1,5 @@
 module global
-      implicit none
+      implicit none      
 
       !Time Parameters
       real,parameter :: tmax = 0.0      !Max run time in Seconds
@@ -38,12 +38,19 @@ module global
 
       !Global Variables
       integer :: num_u3,num_u3_half
-      real :: del_u1
+      real :: del_u1,dt
 
       !Global Arrays
       real,dimension(:,:),allocatable :: x_arr,y_arr,z_arr,r_arr
-      real,dimension(:,:),allocatable :: costh
+      real,dimension(:),allocatable :: hratm_N,hthatm_N,hphiatm_N,hthg_N,hphig_N
+      real,dimension(:),allocatable :: hratm_S,hthatm_S,hphiatm_S,hthg_S,hphig_S
+      real,dimension(:,:),allocatable :: sigp_arr,sigh_arr,sig0_arr,eta_arr
+
+
+      real,dimension(:,:),allocatable :: costh,va2_arr,eps_arr
       !Grid Arrays
-      real,dimension(:,:),allocatable :: h3,h1,h2
+      real,dimension(:,:),allocatable :: h3,h1,h2,bsqrt,g22,g11,g13,g21,g12,jac,g33
+      real,dimension(:,:),allocatable :: gsup11,gsup13
+      real,dimension(:),allocatable :: u1
 
 end module
