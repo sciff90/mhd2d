@@ -476,9 +476,23 @@ a[1,0] 				= d2co[1]+d1co[1]-p0/3.d0
 a[Npts-3,Npts-3] 	= -2.d0*d2co[Npts-2]-d0co[Npts-2]+4.d0*pn/3.d0
 a[Npts-4,Npts-3]	= d2co[Npts-2]-d1co[Npts-2]-pn/3.d0
 
-eval_sc				= La_eigenproblem((a),eigenvectors=evec1_sc,/double)
+eval_sc				= La_eigenproblem(a,eigenvectors=evec1_sc)
 evec_sc				= dcomplexarr(Npts,Npts-2)
 evec_sc[1:Npts-2,*]	= evec1_sc
+
+a_fort = complexarr(Ipts,Ipts)
+openr,1,'~/Code/mhd2d/test.dat'
+readf,1,a_fort
+close,1
+
+eval_fort = complexarr(IPts)
+evec_fort = evec_sc
+evec_fort = 0
+openr,1,'~/Code/mhd2d/test2.dat'
+readf,1,eval_fort
+close,1
+
+
 
 if(ixbc_0 eq 1) then begin
   evec_sc[0,*]		= (4.d0*evec_sc[1,*]     -evec_sc[2,*]     )/3.d0

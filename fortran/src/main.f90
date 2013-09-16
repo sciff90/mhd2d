@@ -4,7 +4,7 @@ program main
        real etime
        real elapsed(2)
        real total
-
+       call system('ulimit -s unlimited')
        call gen_grid()
        call get_va()
        call get_facts()

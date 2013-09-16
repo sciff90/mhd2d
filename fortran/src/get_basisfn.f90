@@ -12,15 +12,26 @@ subroutine get_basisfn()
     complex,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
     complex,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
     real,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co
-    real,dimension(:,:),allocatable :: a
-    integer,dimension(:),allocatable :: indx
+    complex,dimension(:,:),allocatable :: a
+    integer,dimension(:),allocatable :: indx,index_array
 
     !counters
     integer :: ii,jj,kk,sets
 
     !variables
-    integer :: ixbc_0,ixbc_n,Npts,Ipts
+    integer :: ixbc_0,ixbc_n,Npts,Ipts,max_index
     real :: du1_sc,du1_2,du1_sq,p0,pn
+
+    !Spepherical Harmonics
+    integer :: n ,lda,ldvl,ldvr
+    integer :: info,lwork
+    complex,dimension(:),allocatable :: rwork(:)
+    complex,dimension(:,:),allocatable :: vl,vr,evec    
+    complex,dimension(:),allocatable :: w,eval,temp_array
+    complex,dimension(:),allocatable :: work
+    real :: ABNRM
+    real,dimension(:),allocatable :: rconde,rcondv,sc
+    integer :: ilo,ihi
 
     do sets = 0, nbsets-1
     
@@ -87,6 +98,66 @@ subroutine get_basisfn()
         a(Npts-3,Npts-3) = -2.0*d2co(Npts-2)-d0co(Npts-2)+4.0*pn/3.0
         a(Npts-4,Npts-3) = d2co(Npts-2)-d1co(Npts-2)-pn/3.0
 
+        lwork = -1
+        N = Ipts
+        lda = N
+        ldvl = N
+        ldvr = N
+        
+        allocate(vl(0:ldvl-1,0:n-1))
+        allocate(evec(0:Npts-1,0:Npts-3))
+        allocate(vr(0:ldvl-1,0:n-1))
+        allocate(w(0:n-1))    
+        allocate(eval(0:n-1))
+        allocate(temp_array(0:n-1))
+        allocate(index_array(0:n-1))
+        allocate(work(0:100))
+        allocate(rwork(0:(2*N)-1))
+        allocate(sc(0:N-1))
+        allocate(rconde(0:N-1))
+        allocate(rcondv(0:N-1))
+
+        CALL cgeevx('B','V', 'V','N', N, a, LDA, W, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, RWORK, INFO)
+        LWORK = int(work(0))
+        deallocate(work)
+        allocate(work(0:lwork-1))
+        CALL cgeevx('B','V', 'V','N', N, a, LDA, W, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, RWORK, INFO)
+        IF( INFO.GT.0 ) THEN
+           WRITE(*,*)'The algorithm failed to compute eigenvalues.'           
+        END IF
+        eval = w
+        evec = vl(1:Npts-2,:)
+
+        open (unit=10, file='../test.dat', form = 'formatted')
+        write(10,*)evec
+        close(10)
+
+        !Sort Eigenvectors
+        !Array index sort function
+        do kk = 0,Ipts-1
+                max_index = maxloc(real(eval),1) - 1
+                index_array(Ipts-1-kk) = max_index
+                temp_array(Ipts-1-kk) = eval(max_index)
+                eval(max_index) = -1                                
+        end do
+        eval = temp_array
+
+        do kk = 0,num_u1-3
+                !Sort and resample to smaller grid
+                do jj = 0,int(npts/scaleup)
+                        evecs(jj,kk) = evec(indx(jj),index_array(kk))
+                end do 
+        end do
+  
+        ev_temp(:,0:nm,sets) = evecs(:,0:nm)
+        evl_temp(0:nm,sets) = eval(0:nm)
     end do
+
+    write(*,*) "done"
+
+
+
+
+
 
 end subroutine get_basisfn
