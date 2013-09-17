@@ -480,20 +480,6 @@ eval_sc				= La_eigenproblem(a,eigenvectors=evec1_sc)
 evec_sc				= dcomplexarr(Npts,Npts-2)
 evec_sc[1:Npts-2,*]	= evec1_sc
 
-a_fort = complexarr(Ipts,Ipts)
-openr,1,'~/Code/mhd2d/test.dat'
-readf,1,a_fort
-close,1
-
-eval_fort = complexarr(IPts)
-evec_fort = evec_sc
-evec_fort = 0
-openr,1,'~/Code/mhd2d/test2.dat'
-readf,1,eval_fort
-close,1
-
-
-
 if(ixbc_0 eq 1) then begin
   evec_sc[0,*]		= (4.d0*evec_sc[1,*]     -evec_sc[2,*]     )/3.d0
 endif else begin
@@ -514,6 +500,11 @@ for ll 	= 0,Num_u1-3 do evecs(*,ll) = evec_sc[indx,isort(ll)]			; Sort and resam
 
 ev_tmp[*,0:nm,sets]		= evecs[*,0:nm]
 evl_tmp[0:nm,sets]		= evals[0:nm]
+
+evec_sc2       = complexarr(Npts,Npts-2)
+openr,1,'~/Code/mhd2d/evecs.dat',/F77_UNFORMATTED
+readu,1,evec_sc2
+close,1
 
 end				; end basis set loop.
 

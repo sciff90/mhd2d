@@ -1,9 +1,9 @@
 program main
        use global
        implicit none 
-       real etime
-       real elapsed(2)
-       real total
+       double precision etime
+       double precision elapsed(2)
+       double precision total
        call system('ulimit -s unlimited')
        call gen_grid()
        call get_va()

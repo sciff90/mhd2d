@@ -2,7 +2,7 @@ subroutine get_basisfn()
     use global
     implicit none
     
-    real,parameter :: scaleup = 4
+    double precision,parameter :: scaleup = 4
     integer,parameter :: NBsets = 1
     integer,parameter :: nmodes = int(num_u1*modefrac)
     integer,parameter :: nm = nmodes-1
@@ -11,8 +11,8 @@ subroutine get_basisfn()
     complex,dimension(0:num_u1-1,0:num_u1-3) :: evecs
     complex,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
     complex,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
-    real,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co
-    complex,dimension(:,:),allocatable :: a
+    double precision,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co
+    complex,dimension(:,:),allocatable :: a,a2
     integer,dimension(:),allocatable :: indx,index_array
 
     !counters
@@ -20,7 +20,7 @@ subroutine get_basisfn()
 
     !variables
     integer :: ixbc_0,ixbc_n,Npts,Ipts,max_index
-    real :: du1_sc,du1_2,du1_sq,p0,pn
+    double precision :: du1_sc,du1_2,du1_sq,p0,pn
 
     !Spepherical Harmonics
     integer :: n ,lda,ldvl,ldvr
@@ -29,8 +29,8 @@ subroutine get_basisfn()
     complex,dimension(:,:),allocatable :: vl,vr,evec    
     complex,dimension(:),allocatable :: w,eval,temp_array
     complex,dimension(:),allocatable :: work
-    real :: ABNRM
-    real,dimension(:),allocatable :: rconde,rcondv,sc
+    double precision :: ABNRM
+    double precision,dimension(:),allocatable :: rconde,rcondv,sc
     integer :: ilo,ihi
 
     do sets = 0, nbsets-1
@@ -64,6 +64,7 @@ subroutine get_basisfn()
         du1_sq = du1_sc**2
 
         Allocate(a(0:Ipts-1,0:Ipts-1))          !Finite difference matrix A
+        Allocate(a2(0:Ipts-1,0:IPts-1))
         Allocate(d2co(0:Npts-1))
         Allocate(d1co(0:Npts-1))
         Allocate(d0co(0:Npts-1))
@@ -117,6 +118,7 @@ subroutine get_basisfn()
         allocate(rconde(0:N-1))
         allocate(rcondv(0:N-1))
 
+
         CALL cgeevx('B','V', 'V','N', N, a, LDA, W, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, RWORK, INFO)
         LWORK = int(work(0))
         deallocate(work)
@@ -128,9 +130,21 @@ subroutine get_basisfn()
         eval = w
         evec = vl(1:Npts-2,:)
 
-        open (unit=10, file='../test.dat', form = 'formatted')
-        write(10,*)evec
-        close(10)
+        !open (unit=10, file='../evec.dat' ,form = 'unformatted')
+        !write(10)evec
+        !close(10)
+
+        if (ixbc_0 .eq. 1) then
+                evec(:,0) = (4.0*evec(1,:) -evec(2,:))/3.0
+        else
+                evec(:,0) = 0.0
+        end if
+
+        if (ixbc_n .eq. 1) then
+                evec(:,Npts-1) = (4.0*evec(Npts-2,:)-evec(Npts-3,:))/3.0
+        else
+                evec(:,Npts-1) = 0.0
+        end if
 
         !Sort Eigenvectors
         !Array index sort function
@@ -151,6 +165,11 @@ subroutine get_basisfn()
   
         ev_temp(:,0:nm,sets) = evecs(:,0:nm)
         evl_temp(0:nm,sets) = eval(0:nm)
+        
+
+        open (unit=10, file='../evecs.dat' ,form = 'unformatted')
+        write(10)evecs
+        close(10)
     end do
 
     write(*,*) "done"

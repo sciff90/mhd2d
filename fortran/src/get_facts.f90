@@ -3,17 +3,17 @@ subroutine get_facts()
     implicit none
 
     !arrays
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: sigp_eps_arr,sigh_eps_arr
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: esig_arr,esig2_arr,csig_arr,csig2_arr
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: ssig_arr,ssig2_arr
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: e1e1,e1e2,e1f1,e1f2,f1b2,e2e1,e2e2
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: e2f1,e2f2,f2b1,f2b3,e3b21,e3b23
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: b1e2,b2e1,b2e3,b3e2
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: sigp_eps_arr,sigh_eps_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: esig_arr,esig2_arr,csig_arr,csig2_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: ssig_arr,ssig2_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e1e1,e1e2,e1f1,e1f2,f1b2,e2e1,e2e2
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e2f1,e2f2,f2b1,f2b3,e3b21,e3b23
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: b1e2,b2e1,b2e3,b3e2
     complex,dimension(0:num_u1-1,0:Num_u3-1) :: f1b3,e3b1,e3b3,b1e3,b3e1
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: gg12,gg21,e1esup1,e1e3
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: gg12,gg21,e1esup1,e1e3
 
     !variables
-    real :: dx2,dxsq
+    double precision :: dx2,dxsq
     !factors for integration
     sigp_eps_arr      = sigp_arr / eps_arr
     sigh_eps_arr    = sigh_arr / eps_arr

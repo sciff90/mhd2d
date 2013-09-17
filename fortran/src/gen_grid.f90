@@ -3,28 +3,28 @@ subroutine gen_grid()
     implicit none
     
     !parameters
-    real,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
-    real,parameter :: k0 = 8.02e15      !Magnetic moment in Wb.m
-    real,parameter :: cosColat0 = sqrt(1.0-(r_iono/LVal))
-    real,parameter :: r0 = r_iono*Re
-    real,parameter :: Lat0 = asin(cosColat0)
-    real,parameter :: ColLat0 = acos(cosColat0)
-    real,parameter :: DelS = -0.1e3 !approx 100m spacing. Step along field line (- going outwards from northern hemisphere)
+    double precision,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
+    double precision,parameter :: k0 = 8.02e15      !Magnetic moment in Wb.m
+    double precision,parameter :: cosColat0 = sqrt(1.0-(r_iono/LVal))
+    double precision,parameter :: r0 = r_iono*Re
+    double precision,parameter :: Lat0 = asin(cosColat0)
+    double precision,parameter :: ColLat0 = acos(cosColat0)
+    double precision,parameter :: DelS = -0.1e3 !approx 100m spacing. Step along field line (- going outwards from northern hemisphere)
     
 
     !Variables
-    real :: X,Z,r,Lat,Bx,Bz,Bx_unit,Bz_unit,d3
-    real:: Sn,dsi,ccosth0,numin,numax 
+    double precision :: X,Z,r,Lat,Bx,Bz,Bx_unit,Bz_unit,d3
+    double precision:: Sn,dsi,ccosth0,numin,numax 
     integer :: ii,jj,temp
     integer*4 :: Npts
     !Arrays
-    real,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth 
-    real,dimension(:),allocatable :: mu,rinit,dmudx0
-    real,dimension(:,:),allocatable :: sinth2,sinth02,dmudx,costh02
-    real,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
-    real,dimension(:,:),allocatable :: bfac
-    real,dimension(:,:),allocatable :: gsup22,gsup33 
-    real,dimension(:,:),allocatable :: h30
+    double precision,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth 
+    double precision,dimension(:),allocatable :: mu,rinit,dmudx0
+    double precision,dimension(:,:),allocatable :: sinth2,sinth02,dmudx,costh02
+    double precision,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
+    double precision,dimension(:,:),allocatable :: bfac
+    double precision,dimension(:,:),allocatable :: gsup22,gsup33 
+    double precision,dimension(:,:),allocatable :: h30
 
     !start grid_gen
     X = r0*cos(Lat0)    
@@ -291,10 +291,10 @@ end subroutine gen_grid
 subroutine New_r(r0,u1,u3,costh02,RI,ans,num_u3_half)
     implicit none
     integer:: num_u3_half
-    real,dimension(0:num_u3_half-1) :: r0,ans,error,fr,df_dr,u3
-    real:: u1,costh02,RI
+    double precision,dimension(0:num_u3_half-1) :: r0,ans,error,fr,df_dr,u3
+    double precision:: u1,costh02,RI
     integer:: MaxN,ii
-    real :: Tol
+    double precision :: Tol
 
     MaxN = 100
     Tol = 1.e-3
