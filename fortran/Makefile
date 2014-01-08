@@ -22,7 +22,7 @@ COMP = ifort
 	
 #Define Switches
 #SWITCH = -O2 -module ${MOD}
-SWITCH = -g -debug-parameters -module ${MOD}
+SWITCH = -g -debug-parameters -module ${MOD} -check all
 
 #Define Libraries
 LIB_DIR = -L lib/ifort

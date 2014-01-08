@@ -9,7 +9,7 @@ subroutine get_facts()
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e1e1,e1e2,e1f1,e1f2,f1b2,e2e1,e2e2
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e2f1,e2f2,f2b1,f2b3,e3b21,e3b23
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: b1e2,b2e1,b2e3,b3e2
-    complex,dimension(0:num_u1-1,0:Num_u3-1) :: f1b3,e3b1,e3b3,b1e3,b3e1
+    complex*16,dimension(0:num_u1-1,0:Num_u3-1) :: f1b3,e3b1,e3b3,b1e3,b3e1
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: gg12,gg21,e1esup1,e1e3
 
     !variables

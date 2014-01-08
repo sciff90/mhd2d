@@ -34,7 +34,7 @@ module global
       double precision,parameter :: c2 = (c_u/Re)**2         !speed of light squared in re^2/c^2
       double precision,parameter :: mhocgs = 1.0/(4.0*pi*e0_u) !conversion factor needed with bobs ionospheric file 
       double precision,parameter :: re2 = re**2              !Re^2
-      complex,parameter :: im = (0,m)
+      complex*16,parameter :: im = (0,m)
 
       !Global Variables
       integer :: num_u3,num_u3_half

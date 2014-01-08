@@ -25,8 +25,8 @@ subroutine get_Va()
 
         !Ionospheric Data File Arrays
         double precision,dimension(0:num_u1-1,0:num_u3-1) :: No_N,Mav,Temp
-        complex,dimension(0:num_u1-1) :: sigpatm_N,sighatm_N,sig0atm_N
-        complex,dimension(0:num_u1-1) :: sigpatm_S,sighatm_S,sig0atm_S
+        complex*16,dimension(0:num_u1-1) :: sigpatm_N,sighatm_N,sig0atm_N
+        complex*16,dimension(0:num_u1-1) :: sigpatm_S,sighatm_S,sig0atm_S
 
 
         !Data File Variables
