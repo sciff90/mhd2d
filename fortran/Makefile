@@ -4,6 +4,8 @@
 OBJ = obj
 SRC = src
 MOD = mod
+PLOTS = plots
+DATA = data
 EXEC = xmhd2d
 
 OBJECTS = ${OBJ}/global.o\
@@ -47,7 +49,7 @@ LIB = -llapack -lblas
 
 
 #Makefile
-all: $(OBJECTS)
+all: DIR $(OBJECTS)
 	$(COMP) $(SWITCH) ${OBJECTS} -o ${EXEC} $(LIB_DIR) $(LIB)
 	
 ${OBJ}/global.o: ${SRC}/global.f90
@@ -70,11 +72,17 @@ ${OBJ}/get_facts.o: ${SRC}/get_facts.f90 ${MOD}/global.mod
 
 ${OBJ}/get_basisfn.o: ${SRC}/get_basisfn.f90 ${MOD}/global.mod
 		$(COMP) -c $(SWITCH) ${SRC}/get_basisfn.f90 -o ${OBJ}/get_basisfn.o
+DIR:
+	mkdir -p $(OBJ) $(DATA) $(PLOTS) $(MOD)
 clean:
-	rm ${OBJ}/*.o
-	rm ${MOD}/*.mod
+	rm -rf ${OBJ}
+
 #Cleaning Everything
 cleanest: clean
-	rm ${EXEC}
+	rm -rf ${EXEC}
+	rm -rf ${DATA}
+	rm -rf ${PLOTS}
+	rm -rf ${MOD}
+
 # End of the makefile
 
