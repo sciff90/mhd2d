@@ -213,7 +213,7 @@ subroutine gen_grid()
     end do
 
     Allocate(bfac(0:num_u1-1,0:num_u3-1))
-    Allocate(bsqrt(0:num_u3-1,0:num_u3-1))
+    Allocate(bsqrt(0:num_u1-1,0:num_u3-1))
     bfac(:,:) = 1.0+3.0*costh2(:,:)
     bsqrt(:,:) = sqrt(bfac(:,:))
 

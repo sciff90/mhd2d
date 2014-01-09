@@ -383,6 +383,7 @@ subroutine get_Va()
            e1b2atm_S =-sig22/sigden
            e2b1atm_S = sig11/sigden
            e2b2atm_S = sig21/sigden
-                          
+
+           write(*,*) 'Get Va Complete...'
 
 end subroutine get_Va

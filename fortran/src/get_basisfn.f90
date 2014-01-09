@@ -180,16 +180,16 @@ subroutine get_basisfn()
 
      end do
 
-     allocate(evl(0:nm*nbsets-1))
-     allocate(ev(0:num_u1-1,0:nm*nbsets-1))
+     allocate(evl(0:nm*nbsets))
+     allocate(ev(0:num_u1-1,0:nm*nbsets))
      allocate(ev2(0:num_u1-1))
 
 
      do ii = 0, size(evl_temp,1)*nbsets-1
-        if (ii<nbsets) then
+        if (ii<size(evl_temp,1)) then
           evl(ii) = evl_temp(ii,0)
         else
-          evl(ii) = evl_temp(ii,1)
+          evl(ii) = evl_temp(ii-size(evl_temp,1),1)
         end if
     end do
 

@@ -22,17 +22,21 @@ subroutine quad_inter(V,X,U,Y)
                     end if
              end do
             
-        jj = jj-1        
+        jj = jj-1       
+        if(jj .le. size(X)-2) then 
 
-        a0 = V(jj)/((X(jj)-X(jj+1))*(X(jj)-X(jj+2)))
-        a1 = V(jj+1) / ((X(jj+1)-X(jj))*(X(jj+1)-X(jj+2)))
-        a2 = V(jj+2) / ((X(jj+2)-X(jj))*(X(jj+2)-X(jj+1)))
+          a0 = V(jj)/((X(jj)-X(jj+1))*(X(jj)-X(jj+2)))
+          a1 = V(jj+1) / ((X(jj+1)-X(jj))*(X(jj+1)-X(jj+2)))
+          a2 = V(jj+2) / ((X(jj+2)-X(jj))*(X(jj+2)-X(jj+1)))
 
-        A = a0+a1+a2
-        B = -(a0*(X(jj+1)+X(jj+2)) + a1*(X(jj)+X(jj+2))+a2*(X(jj)+x(jj+1)))
-        C = a0*X(jj+1)*X(jj+2) + a1*X(jj)*X(jj+2) + a2*X(jj)*X(jj+1)
+          A = a0+a1+a2
+          B = -(a0*(X(jj+1)+X(jj+2)) + a1*(X(jj)+X(jj+2))+a2*(X(jj)+x(jj+1)))
+          C = a0*X(jj+1)*X(jj+2) + a1*X(jj)*X(jj+2) + a2*X(jj)*X(jj+1)
 
-        Y(ii) = A*U(ii)**2+ B*U(ii) + C
+          Y(ii) = A*U(ii)**2+ B*U(ii) + C
+        else
+          Y(ii) = V(size(V))
+        end if
 
    end do
    return
