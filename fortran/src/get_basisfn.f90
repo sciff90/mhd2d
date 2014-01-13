@@ -8,11 +8,11 @@ subroutine get_basisfn()
     integer,parameter :: nm = nmodes-1
 
     !arrays
-    complex*16,dimension(0:num_u1-1,0:num_u1-3) :: evecs
-    complex*16,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
-    complex*16,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
+    double precision,dimension(0:num_u1-1,0:num_u1-3) :: evecs
+    double precision,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
+    double precision,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
     double precision,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co,dufac
-    complex*16,dimension(:,:),allocatable :: a,a2
+    double precision,dimension(:,:),allocatable :: a,a2
     integer,dimension(:),allocatable :: indx,index_array
 
     !counters
@@ -26,16 +26,21 @@ subroutine get_basisfn()
     !Spepherical Harmonics
     integer :: n ,lda,ldvl,ldvr
     integer :: info,IFAIL,ERROR
-    complex*16,dimension(:),allocatable :: rwork(:)
-    complex*16,dimension(:,:),allocatable :: vl,vr,evec
-    complex*16,dimension(:),allocatable :: w,eval,temp_array
-    complex*16,dimension(:),allocatable :: work
+    double precision,dimension(:),allocatable :: rwork,wi,wr
+    double precision,dimension(:,:),allocatable :: vl,vr,evec
+    double precision,dimension(:),allocatable :: w,eval,temp_array
+    double precision,dimension(:),allocatable :: work
     double precision :: ABNRM
     double precision,dimension(:),allocatable :: rconde,rcondv,sc
     integer :: ilo,ihi
-    complex*16,dimension(:,:),allocatable :: Ev,eve,evt,eveinv;
-    complex*16,dimension(:),allocatable :: Evl,Ev2,nulm;
-    integer,dimension(:),allocatable :: IPIV
+    double precision,dimension(:,:),allocatable :: Ev,eve,evt,eveinv;
+    double precision,dimension(:),allocatable :: Evl,Ev2,nulm;
+    integer,dimension(:),allocatable :: IPIV,iwork,Eidx,Oidx
+
+    !Coefficient Arrays
+    double precision,dimension(:,:),allocatable :: b3coef,b3b3,psifaci,&
+      psifacg,psiicoef,psigcoef,psiib3_S,psigb3_S,psigb3_N,psiib3_N
+    double precision,dimension(:),allocatable :: nufacg,nufaci,nufac0,temp_trans
 
     do sets = 0, nbsets-1
 
@@ -75,6 +80,7 @@ subroutine get_basisfn()
           Allocate(d1co(0:Npts-1))
           Allocate(d0co(0:Npts-1))
         end if
+        a = 0;
 
 
         d2co    = 4.0*u1_sc*(1+u1_sc)/du1_sq
@@ -106,10 +112,6 @@ subroutine get_basisfn()
         a(Npts-3,Npts-3) = -2.0*d2co(Npts-2)-d0co(Npts-2)+4.0*pn/3.0
         a(Npts-4,Npts-3) = d2co(Npts-2)-d1co(Npts-2)-pn/3.0
 
-        open (unit=10, file='../a.dat' ,form = 'unformatted')
-        write(10)a
-        close(10)
-
         lwork = -1
         N = Ipts
         lda = N
@@ -120,27 +122,29 @@ subroutine get_basisfn()
           allocate(vl(0:ldvl-1,0:n-1))
           allocate(evec(0:Npts-1,0:Npts-3))
           allocate(vr(0:ldvl-1,0:n-1))
-          allocate(w(0:n-1))
+          allocate(wr(0:n-1))
+          allocate(wi(0:n-1))
           allocate(eval(0:n-1))
           allocate(temp_array(0:n-1))
           allocate(index_array(0:n-1))
           allocate(work(0:100))
           allocate(rwork(0:(2*N)-1))
+          allocate(iwork(0:2*N-1))
           allocate(sc(0:N-1))
           allocate(rconde(0:N-1))
           allocate(rcondv(0:N-1))
         end if
 
 
-        CALL zgeevx('B','V', 'V','N', N, a, LDA, W, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, RWORK, INFO)
+        CALL dgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
         LWORK = int(work(0))
         deallocate(work)
         allocate(work(0:lwork-1))
-        CALL zgeevx('B','V', 'V','N', N, a, LDA, W, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, RWORK, INFO)
+        CALL dgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
         IF( INFO.GT.0 ) THEN
            WRITE(*,*)'The algorithm failed to compute eigenvalues.'
         END IF
-        eval = w
+        eval = wr
         do ii=1,Npts-2
           do jj = 0,N-1
             evec(ii,jj) = vl(ii-1,jj)
@@ -180,20 +184,22 @@ subroutine get_basisfn()
 
      end do
 
-     allocate(evl(0:nm*nbsets))
-     allocate(ev(0:num_u1-1,0:nm*nbsets))
+     allocate(evl(0:NBsets*nmodes-1))
+     allocate(ev(0:num_u1-1,0:NBsets*nmodes-1))
      allocate(ev2(0:num_u1-1))
 
 
-     do ii = 0, size(evl_temp,1)*nbsets-1
+     do ii = 0, NBsets*nmodes-1
         if (ii<size(evl_temp,1)) then
           evl(ii) = evl_temp(ii,0)
+          ev(:,ii) = ev_temp(:,ii,0)
         else
           evl(ii) = evl_temp(ii-size(evl_temp,1),1)
+          ev(:,ii) = ev_temp(:,ii-size(evl_temp,1),1)
         end if
     end do
 
-    write(*,*)"number of basis functions generated = ",nm*nbsets
+    write(*,*)"number of basis functions generated = ",nmodes*nbsets-1
 
 
 !    deallocate(vl)
@@ -209,23 +215,22 @@ subroutine get_basisfn()
     !deallocate(rconde)
     !deallocate(rcondv)
 
-    write(*,*) 'test'
-
     !Normalize the basis functions
     allocate(dufac(0:num_u1-1))
     dufac = del_u1/(2.0*sqrt(1.0+u1))
     dufac(0) = dufac(0)*0.5;
     dufac(num_u1-1) = dufac(num_u1-1)*0.5
 
-    do ii = 0,nm*NBsets-1
-      ev2 = ev(:,ii)*conjg(ev(:,ii))*dufac
+    do ii = 0,NBsets*nmodes-1
+      ev2 = ev(:,ii)*ev(:,ii)*dufac
       normfac = sqrt(sum(ev2))
       ev(:,ii) = ev(:,ii)/normfac
     end do
 
-    allocate(evt(0:nm*nbsets-1,0:num_u1-1))
-    allocate(eve(0:nm*nbsets-1,0:nm*nbsets-1))
-    allocate(nulm(0:nm*nbsets-1))
+    allocate(evt(0:NBsets*nmodes-1,0:num_u1-1))
+    allocate(eve(0:NBsets*nmodes-1,0:NBsets*nmodes-1))
+    allocate(eveinv(0:NBsets*nmodes-1,0:NBsets*nmodes-1))
+    allocate(nulm(0:NBsets*nmodes-1))
 
 
     nulm = (sqrt(1.0+4.0+evl)-1.0)*0.5;
@@ -235,29 +240,88 @@ subroutine get_basisfn()
 
     !Calculate Inverse
 
-    Mmax = nm*nbsets-1
-    Nmax = nm*nbsets-1
+    Mmax = nmodes*nbsets
+    Nmax = nmodes*nbsets
     LDA = Mmax
     LWORK = 64*Nmax
 
+    deallocate(WORK)
     allocate(IPIV(0:Nmax-1))
     allocate(WORK(0:LWORK-1))
 
     write(*,*) 'Calculating Inverse...'
-    call zgetrf(Mmax,Nmax,eveinv,LDA,IPIV,INFO)
+    call dgetrf(Mmax,Nmax,eveinv,LDA,IPIV,INFO)
 
     if (info.eq.0) then
-      call zgetri(Nmax,eveinv,LDA,IPIV,WORK,LWORK,INFO)
+      call dgetri(Nmax,eveinv,LDA,IPIV,WORK,LWORK,INFO)
     else
       write(*,*) 'The Factor U is Singular'
     end if
 
+    write(*,*) 'Matrix Inversion Completed...'
 
-    write(*,*) 'done'
+    !For fitting at only Br locations
+    Allocate(Eidx(0:num_u1/2))
+    Allocate(Oidx(0:num_u1/2-1))
+    
+    !Array index of odd and even gridpoints
+    do ii = 0, num_u1/2
+      Eidx(ii) = ii*2
+      if(ii*2<num_u1)then
+        Oidx(ii) = ii*2+1
+      end if
+    end do
+
+    !Allocate Coefficient Arrays
+    Allocate(b3coef(0:NBsets*nmodes-1,0:num_u1/2))
+    Allocate(b3b3(0:num_u1-1,0:num_u1/2))
+    Allocate(nufac0(0:NBsets*nmodes-1))
+    Allocate(nufaci(0:NBsets*nmodes-1))
+    Allocate(nufacg(0:NBsets*nmodes-1))
+    Allocate(psifaci(0:NBsets*nmodes-1,0:num_u1/2))
+    Allocate(psifacg(0:NBsets*nmodes-1,0:num_u1/2))
+    Allocate(psiicoef(0:NBsets*nmodes-1,0:num_u1/2))
+    Allocate(psigcoef(0:NBsets*nmodes-1,0:num_u1/2))
+    Allocate(psiib3_S(0:num_u1-1,0:num_u1/2))
+    Allocate(psigb3_S(0:num_u1-1,0:num_u1/2))
+    Allocate(psiib3_N(0:num_u1-1,0:num_u1/2))
+    Allocate(psigb3_N(0:num_u1-1,0:num_u1/2a)
+    Allocate(temp_trans(0:num_u1/2))
 
 
+    b3coef = matmul(eveinv,evt(:,Eidx))
+    b3b3 = matmul(ev,b3coef)
 
+    nufac0 = nulm*r_iono*(1.d0 - 1.d0/r_iono**(2*nulm+1))
+    nufaci = (1.d0 + nulm/(nulm+1)/r_iono**(2*nulm+1))/nufac0
+    nufacg = (2*nulm+1)/(nulm+1)/r_iono**nulm/nufac0
 
+    !For Southern Ionosphere/Atmopshere
+    temp_trans = hratm_S(Eidx)
+    do ii=0,NBsets*nmodes-1
+    do jj=0,num_u1/2
+      psifaci(ii,jj) = nufaci(ii)*temp_trans(jj)
+    end do
+    end do
+    !psifaci = outer_prod(nufaci,hratm_S(Eidx))
+    
+    !psifacg = matmul(nufacg,hratm_S(Eidx))
+    !psiicoef = b3coef*psifaci
+    !psigcoef = b3coef*psifacg
+    !psiib3_S = matmul(ev,psiicoef)   !now b3b3 should be nxp1 x nxp1 unit matrix
+    !psigb3_S = matmul(ev,psigcoef)
 
-
+    !!For Northern Ionosphere/Atmopshere
+    !psifaci = matmul(nufaci,hratm_N(Eidx))
+    !psifacg = matmul(nufacg,hratm_N(Eidx))
+    !psiicoef = b3coef*psifaci
+    !psigcoef = b3coef*psifacg
+    !psiib3_N = matmul(ev,psiicoef)  !now b3b3 should be nxp1 x nxp1 unit matrix
+    !psigb3_N = matmul(ev,psigcoef)
+    
+    write(*,*)"done"
 end subroutine get_basisfn
+
+
+
+

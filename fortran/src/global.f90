@@ -19,6 +19,7 @@ module global
       integer,parameter :: num_u1 = 151    !number of field lines
       double precision,parameter :: Re = 6378.388e3 !Re in metres
       double precision,parameter :: z0 = 80.0e3     !height of ionospheric thin sheet current (in) m
+      double precision,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
       !double precision,parameter :: ds0 = 5.0e3    !grid spacing (along cononical field line) at z0 (in m)
       double precision,parameter :: dsn = 500.0e3   !grid spacing (along cononical field line) at rtop (in m)
       double precision,parameter :: modefrac = 0.2  !fraction (of gridpoints in u1) to use as basis function in atmospheric expansions

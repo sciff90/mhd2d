@@ -3,7 +3,6 @@ subroutine gen_grid()
     implicit none
     
     !parameters
-    double precision,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
     double precision,parameter :: k0 = 8.02e15      !Magnetic moment in Wb.m
     double precision,parameter :: cosColat0 = sqrt(1.0-(r_iono/LVal))
     double precision,parameter :: r0 = r_iono*Re
