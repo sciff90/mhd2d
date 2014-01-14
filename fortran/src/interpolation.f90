@@ -8,12 +8,12 @@ contains
 !Y is the output array
 subroutine quad_inter(V,X,U,Y)
     implicit none
-    double precision,dimension(:) :: U,X,V,Y   
+    double precision,dimension(:) :: U,X,V,Y
     double precision:: A,B,C,a0,a1,a2    !Y = A*x^2 + B*x +C
 
     !Counters
     integer ii,jj,kk;
-    
+
     do ii = 1,size(U)
 
             do jj = 1, Size(X)
@@ -21,9 +21,9 @@ subroutine quad_inter(V,X,U,Y)
                             exit
                     end if
              end do
-            
-        jj = jj-1       
-        if(jj .le. size(X)-2) then 
+
+        jj = jj-1
+        if(jj .le. size(X)-2) then
 
           a0 = V(jj)/((X(jj)-X(jj+1))*(X(jj)-X(jj+2)))
           a1 = V(jj+1) / ((X(jj+1)-X(jj))*(X(jj+1)-X(jj+2)))
@@ -41,5 +41,5 @@ subroutine quad_inter(V,X,U,Y)
    end do
    return
 end subroutine
-    
+
 end module

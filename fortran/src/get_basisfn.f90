@@ -1,5 +1,6 @@
 subroutine get_basisfn()
     use global
+    use vector_operations
     implicit none
 
     double precision,parameter :: scaleup = 4
@@ -233,7 +234,7 @@ subroutine get_basisfn()
     allocate(nulm(0:NBsets*nmodes-1))
 
 
-    nulm = (sqrt(1.0+4.0+evl)-1.0)*0.5;
+    nulm = (sqrt(1.0+4.0*evl)-1.0)*0.5;
     evt = transpose(ev)
     eve = matmul(evt,ev)
     eveinv = eve
@@ -263,11 +264,11 @@ subroutine get_basisfn()
     !For fitting at only Br locations
     Allocate(Eidx(0:num_u1/2))
     Allocate(Oidx(0:num_u1/2-1))
-    
+
     !Array index of odd and even gridpoints
     do ii = 0, num_u1/2
       Eidx(ii) = ii*2
-      if(ii*2<num_u1)then
+      if(ii*2<num_u1-1)then
         Oidx(ii) = ii*2+1
       end if
     end do
@@ -285,7 +286,7 @@ subroutine get_basisfn()
     Allocate(psiib3_S(0:num_u1-1,0:num_u1/2))
     Allocate(psigb3_S(0:num_u1-1,0:num_u1/2))
     Allocate(psiib3_N(0:num_u1-1,0:num_u1/2))
-    Allocate(psigb3_N(0:num_u1-1,0:num_u1/2a)
+    Allocate(psigb3_N(0:num_u1-1,0:num_u1/2))
     Allocate(temp_trans(0:num_u1/2))
 
 
@@ -297,28 +298,21 @@ subroutine get_basisfn()
     nufacg = (2*nulm+1)/(nulm+1)/r_iono**nulm/nufac0
 
     !For Southern Ionosphere/Atmopshere
-    temp_trans = hratm_S(Eidx)
-    do ii=0,NBsets*nmodes-1
-    do jj=0,num_u1/2
-      psifaci(ii,jj) = nufaci(ii)*temp_trans(jj)
-    end do
-    end do
-    !psifaci = outer_prod(nufaci,hratm_S(Eidx))
-    
-    !psifacg = matmul(nufacg,hratm_S(Eidx))
-    !psiicoef = b3coef*psifaci
-    !psigcoef = b3coef*psifacg
-    !psiib3_S = matmul(ev,psiicoef)   !now b3b3 should be nxp1 x nxp1 unit matrix
-    !psigb3_S = matmul(ev,psigcoef)
+    psifaci = matmul_GDS(hratm_S(Eidx),nufaci)
+    psifacg = matmul_GDS(hratm_S(Eidx),nufacg)
+    psiicoef = b3coef*psifaci
+    psigcoef = b3coef*psifacg
+    psiib3_S = matmul(ev,psiicoef)   !now b3b3 should be nxp1 x nxp1 unit matrix
+    psigb3_S = matmul(ev,psigcoef)
 
     !!For Northern Ionosphere/Atmopshere
-    !psifaci = matmul(nufaci,hratm_N(Eidx))
-    !psifacg = matmul(nufacg,hratm_N(Eidx))
-    !psiicoef = b3coef*psifaci
-    !psigcoef = b3coef*psifacg
-    !psiib3_N = matmul(ev,psiicoef)  !now b3b3 should be nxp1 x nxp1 unit matrix
-    !psigb3_N = matmul(ev,psigcoef)
-    
+    psifaci = matmul_GDS(hratm_N(Eidx),nufaci)
+    psifacg = matmul_GDS(hratm_N(Eidx),nufacg)
+    psiicoef = b3coef*psifaci
+    psigcoef = b3coef*psifacg
+    psiib3_N = matmul(ev,psiicoef)  !now b3b3 should be nxp1 x nxp1 unit matrix
+    psigb3_N = matmul(ev,psigcoef)
+
     write(*,*)"done"
 end subroutine get_basisfn
 
