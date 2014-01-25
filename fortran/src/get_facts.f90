@@ -6,11 +6,6 @@ subroutine get_facts()
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: sigp_eps_arr,sigh_eps_arr
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: esig_arr,esig2_arr,csig_arr,csig2_arr
     double precision,dimension(0:num_u1-1,0:Num_u3-1) :: ssig_arr,ssig2_arr
-    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e1e1,e1e2,e1f1,e1f2,f1b2,e2e1,e2e2
-    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: e2f1,e2f2,f2b1,f2b3,e3b21,e3b23
-    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: b1e2,b2e1,b2e3,b3e2
-    complex*16,dimension(0:num_u1-1,0:Num_u3-1) :: f1b3,e3b1,e3b3,b1e3,b3e1
-    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: gg12,gg21,e1esup1,e1e3
 
     !variables
     double precision :: dx2,dxsq
@@ -24,6 +19,9 @@ subroutine get_facts()
     csig2_arr = cos(sigh_eps_arr*dt*0.5)
     ssig_arr      = sin(sigh_eps_arr*dt)
     ssig2_arr = sin(sigh_eps_arr*dt*0.5)
+
+    !Allocate Global Factor Arrays
+    allocate(gg12)
     
     !factors for generator
     gg12 =g22*g33/h3/jac

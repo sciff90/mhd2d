@@ -1,17 +1,17 @@
 module global
-      implicit none      
+      implicit none
 
       !Time Parameters
       double precision,parameter :: tmax = 0.0      !Max run time in Seconds
       double precision,parameter :: cour = 0.85     !fraction of courant number
-      
+
       double precision,parameter :: m = 2.0         !azimuthal (wavenumber)
       double precision,parameter :: drive0 = 10.0e-9!amplitude of driver (T)
       double precision,parameter :: freq = 0.01     !frequency of driver in (Hz)
 
       !Directories
       character(*),parameter :: data_dir = "./data"     !data directory
-      
+
       !Grid Parameters
       double precision,parameter :: Lval = 6.0      !conoical L value
       double precision,parameter :: LMin = 2.0      !min L
@@ -28,12 +28,12 @@ module global
       !constants
       double precision,parameter :: pi = 3.141592
       !Scaled physical constants for unit length in Re
-      
+
       double precision,parameter :: c_u = 2.997e8            !speed of light in vacuum
       double precision,parameter :: u0_u = 4.0*pi*1.0e-7     !magnetic permeability (SI units)
       double precision,parameter :: e0_u = 1.0/(u0_u*c_u**2) !dielectric constant for a vacuum in (si) units
       double precision,parameter :: c2 = (c_u/Re)**2         !speed of light squared in re^2/c^2
-      double precision,parameter :: mhocgs = 1.0/(4.0*pi*e0_u) !conversion factor needed with bobs ionospheric file 
+      double precision,parameter :: mhocgs = 1.0/(4.0*pi*e0_u) !conversion factor needed with bobs ionospheric file
       double precision,parameter :: re2 = re**2              !Re^2
       complex*16,parameter :: im = (0,m)
 
@@ -53,5 +53,11 @@ module global
       double precision,dimension(:,:),allocatable :: h3,h1,h2,bsqrt,g22,g11,g13,g21,g12,jac,g33
       double precision,dimension(:,:),allocatable :: gsup11,gsup13
       double precision,dimension(:),allocatable :: u1
+      !Factor Arrays
+      double precision,dimension(:,:),allocatable:: gg12,gg21,e1e1,e1e2,e1f1,&
+        e1f2,f1b2,e2e1,e2e2,e2f1,e2f2,f2b1,f2b3,e3b23,b1e2,b2e1,b2e3,b3e2,&
+        e1esup1,e1e3
+      complex*16,dimension(:,:),allocatable :: f1b3,e3b1,e3b3,b1e3,b3e1
+
 
 end module
