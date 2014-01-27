@@ -1,4 +1,4 @@
-Pro Faligned2d_AnalyticIono_v6
+Pro mhd2d_idl
 ;	This is a rewrite of the "alfdip2dv3_mds_Yee.pro" code (from Minnesota visit).
 ;	Full meridional plane
 ;	Using a Yee grid and with Height distributed Ionosphere and tilt dipole coordinates
