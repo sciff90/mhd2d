@@ -15,6 +15,8 @@ OBJECTS = ${OBJ}/global.o\
 					${OBJ}/get_Va.o\
 					${OBJ}/get_facts.o\
 					${OBJ}/get_basisfn.o\
+					${OBJ}/iterate.o\
+					${OBJ}/get_driver.o\
 					${OBJ}/main.o
 
 
@@ -59,7 +61,7 @@ ${OBJ}/global.o: ${SRC}/global.f90
 ${OBJ}/main.o: ${OBJ}/global.o ${SRC}/main.f90 ${OBJ}/gen_grid.o ${OBJ}/get_Va.o ${OBJ}/get_facts.o
 	$(COMP) -c $(SWITCH) ${SRC}/main.f90 -o ${OBJ}/main.o
 
-${OBJ}/gen_grid.o: ${OBJ}/global.o ${SRC}/gen_grid.f90
+${OBJ}/gen_grid.o: ${OBJ}/global.o ${OBJ}/vector_operations.o ${SRC}/gen_grid.f90
 	$(COMP) -c $(SWITCH) ${SRC}/gen_grid.f90 -o ${OBJ}/gen_grid.o
 
 ${OBJ}/get_Va.o: ${OBJ}/global.o ${SRC}/get_Va.f90 ${OBJ}/interpolation.o
@@ -76,6 +78,12 @@ ${OBJ}/get_basisfn.o: ${SRC}/get_basisfn.f90 ${OBJ}/global.o
 
 ${OBJ}/vector_operations.o: ${SRC}/vector_operations.f90
 	$(COMP) -c $(SWITCH) ${SRC}/vector_operations.f90 -o ${OBJ}/vector_operations.o
+
+${OBJ}/iterate.o: ${SRC}/iterate.f90 ${OBJ}/get_driver.o ${OBJ}/global.o
+	$(COMP) -c $(SWITCH) ${SRC}/iterate.f90 -o ${OBJ}/iterate.o
+
+${OBJ}/get_driver.o: ${SRC}/get_driver.f90 ${OBJ}/global.o
+	$(COMP) -c $(SWITCH) ${SRC}/get_driver.f90 -o ${OBJ}/get_driver.o
 
 DIR:
 	mkdir -p $(OBJ) $(DATA) $(PLOTS) $(MOD)

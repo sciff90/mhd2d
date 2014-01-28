@@ -12,7 +12,7 @@ Pro mhd2d_idl
 ;	v6 MDS - 21st Feb 2013 - New (improved) Grid generation (fix for cononical field line length)
 
 ;	Time Parameters
-tmax		= 0.0	             	; sets max run time [in sec]
+tmax		= 10.0	             	; sets max run time [in sec]
 cour		= 0.85					; Fraction of Courant number to use in time step
 dtplot		= 1.0               	; plot every...X seconds
 m			= 2.0               	; azimuthal variation (wave number)
@@ -382,11 +382,11 @@ Begin
  image = TVRD(0,0,!d.X_size,!d.Y_size,true=1)
  Write_PNG,filename,image,r,g,b
 end
-
+stop
 DelS 		= Reform(sqrt((Shift(x_arr(Num_u1-1,*),1)-Shift(x_arr(Num_u1-1,*),0))^2 + (Shift(y_arr(Num_u1-1,*),1)-Shift(Y_arr(Num_u1-1,*),0))^2))
 DelS(0)			= 0.0
 OuterLength 	= Total(DelS,/cumulative)
-
+stop
 Print,'Grid Spacing dsi = ',dsi/1.0e3,' km'
 print,'min spacing in u3', min(abs(d32*h3))*Re/1.0e3,' km'
 ;stop
@@ -502,9 +502,6 @@ ev_tmp[*,0:nm,sets]		= evecs[*,0:nm]
 evl_tmp[0:nm,sets]		= evals[0:nm]
 
 evec_sc2       = complexarr(Npts,Npts-2)
-openr,1,'~/Code/mhd2d/evecs.dat',/F77_UNFORMATTED
-readu,1,evec_sc2
-close,1
 
 end				; end basis set loop.
 
@@ -1333,7 +1330,7 @@ end
 
 
 
-stop
+
 end 				; End of Factors routine
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1397,6 +1394,7 @@ tpnext 	= dtplot
 iplot 	= 0;
 u3		= findgen(num_u3)
 
+stop
 
 ; ################################################
 ; Start time loop
@@ -1410,7 +1408,7 @@ while (iplot lt nplots) do begin
   t 	= t+dt									; Time
 
 Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Driver, OuterLength
-
+stop
 ; shift ei's
     e1p3 	= shift(e1,0,-1)
     e1m3 	= shift(e1,0,1)
@@ -1430,9 +1428,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
     e3p1 	= shift(e3,-1,0)
     e3m1 	= shift(e3,1,0)
     e3p1[num_u1-1,*]= 0.0
-    e3m1[0,*] 		= 0.0
-
-; 	advance bsupi
+    e3m1[0,*] 		= 0.0; 	advance bsupi
 ; -----------------------------------------------------------
     bsup1 = bsup1 + b1e2*(e2p3-e2m3) + b1e3*e3
     bsup2 = bsup2 + b2e1*(e1p3-e1m3) + b2e3*(e3p1-e3m1)
@@ -1480,9 +1476,9 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
     Av_bsup3(0,*)	= 0.0 		& 	Av_bsup3(Num_u1-1,*)	= 0.0
 
 ; rotate to bi
-    b1 = g11*bsup1 + g13*Av_bsup3
+    b1 = g11*bsup1 + g13*av_bsup3
     b2 = g22*bsup2
-    b3 = g13*Av_bsup1 + g33*bsup3
+    b3 = g13*av_bsup1 + g33*bsup3
 
 
 ;    b2[0,*] 		= (4.0*b2(2,*) - b2(4,*))/3.0					; Bob's fortran
@@ -1490,7 +1486,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
 ;    b3[0,*] 		= (4.0*b3(2,*) - b3(4,*))/3.0					; Bob's fortran
     b3[num_u1-1,*] 	= Driver*evens_u3     		 					; Outer L Shell Boundary add driver boundary here
 
-
+stop
 ; shift bi's
     b1p3 	= shift(b1,0,-1)
     b1m3 	= shift(b1,0,1)
@@ -1527,6 +1523,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
     Av_f2	=(shift(f2,1,0) + shift(f2,-1,0))/2
     Av_f2(0,*)			= 0.0
     Av_f2(Num_u1-1,*)	= 0.0
+stop
 
 ;	Need to shift e's to all grid lvls with e1 and e2
 	Av_esup1 			= (shift(esup1,1,0) + shift(esup1,-1,0))/2 			; 	need e1 at e2 locations (e2 is not on boundaries)
@@ -2064,7 +2061,7 @@ Driver				= Amp*spatial*tdep
 Driver(0)			= 0.0
 Driver(Num_u3-1)	= 0.0
 
-
+stop
 end			; End of Driver
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,6 +1,6 @@
 program main
        use global
-       implicit none 
+       implicit none
        double precision etime
        double precision elapsed(2)
        double precision total
@@ -9,9 +9,8 @@ program main
        call get_va()
        call get_facts()
        call get_basisfn()
-       !call gen_numfactors()
-       !call iterate()
+       call iterate()
 
-       write (*, *) "Program finished in",total       
+       write (*, *) "Program finished in",total
 end program main
 

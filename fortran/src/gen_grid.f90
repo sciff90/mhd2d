@@ -1,7 +1,8 @@
 subroutine gen_grid()
-    use global 
+    use global
+    use vector_operations
     implicit none
-    
+
     !parameters
     double precision,parameter :: k0 = 8.02e15      !Magnetic moment in Wb.m
     double precision,parameter :: cosColat0 = sqrt(1.0-(r_iono/LVal))
@@ -9,24 +10,24 @@ subroutine gen_grid()
     double precision,parameter :: Lat0 = asin(cosColat0)
     double precision,parameter :: ColLat0 = acos(cosColat0)
     double precision,parameter :: DelS = -0.1e3 !approx 100m spacing. Step along field line (- going outwards from northern hemisphere)
-    
+
 
     !Variables
     double precision :: X,Z,r,Lat,Bx,Bz,Bx_unit,Bz_unit,d3
-    double precision:: Sn,dsi,ccosth0,numin,numax 
+    double precision:: Sn,dsi,ccosth0,numin,numax
     integer :: ii,jj,temp
     integer*4 :: Npts
     !Arrays
-    double precision,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth 
-    double precision,dimension(:),allocatable :: mu,rinit,dmudx0
+    double precision,dimension(:),allocatable :: XX,ZZ,CLat,u3,ds,s,ss,y,cosCLat,cr,ccosth
+    double precision,dimension(:),allocatable :: mu,rinit,dmudx0,dels_arr
     double precision,dimension(:,:),allocatable :: sinth2,sinth02,dmudx,costh02
     double precision,dimension(:,:),allocatable :: costh0,sinth0,costh2,sinth
     double precision,dimension(:,:),allocatable :: bfac
-    double precision,dimension(:,:),allocatable :: gsup22,gsup33 
+    double precision,dimension(:,:),allocatable :: gsup22,gsup33
     double precision,dimension(:,:),allocatable :: h30
 
     !start grid_gen
-    X = r0*cos(Lat0)    
+    X = r0*cos(Lat0)
     Z = r0*sin(Lat0)
     Npts = 0
 
@@ -40,8 +41,8 @@ subroutine gen_grid()
         Bx_unit = Bx/sqrt(Bx**2+Bz**2)
         Bz_unit = Bz/sqrt(Bx**2+Bz**2)
 
-        X = X + Bx_unit*DelS 
-        Z = Z + Bz_unit*DelS 
+        X = X + Bx_unit*DelS
+        Z = Z + Bz_unit*DelS
         Npts = Npts+1
     end do
 
@@ -58,7 +59,7 @@ subroutine gen_grid()
             Lat = atan(Z/X)
             XX(Npts) = X
             ZZ(Npts) = Z
-            CLat(Npts) = pi/2 -Lat 
+            CLat(Npts) = pi/2 -Lat
 
             Bx = -3.0*k0/r**3*sin(Lat)*cos(Lat)
             Bz = -2.0*k0/r**3*sin(Lat)**2+k0/r**3*cos(Lat)**2
@@ -66,12 +67,12 @@ subroutine gen_grid()
             Bx_unit = Bx/sqrt(Bx**2+Bz**2)
             Bz_unit = Bz/sqrt(Bx**2+Bz**2)
 
-            X = X + Bx_unit*DelS 
-            Z = Z + Bz_unit*DelS 
+            X = X + Bx_unit*DelS
+            Z = Z + Bz_unit*DelS
             Npts = Npts+1
     end do
     Sn = real(Npts-1)*abs(DelS)
-    num_u3_half = nint(2.0*Sn/(dsn))   
+    num_u3_half = nint(2.0*Sn/(dsn))
     num_u3 = 2*num_u3_half + 1  !number of points must be odd
 
     Allocate(u3(0:num_u3-1))
@@ -81,7 +82,7 @@ subroutine gen_grid()
 
 
     dsi = 2.0*Sn/(num_u3_half*(num_u3_half+1)) !space coming from a sum of the arithmetic progression Sn = N/2*(2ds0+(N-1)dsi) and ds0=dsi
-    
+
     Allocate(ds(0:num_u3_half-1))
     Allocate(s(0:num_u3_half))
     Allocate(ss(0:Npts-1))
@@ -96,9 +97,9 @@ subroutine gen_grid()
                     s(ii) = 0
             else
                     s(ii) = sum(ds(0:ii-1))
-            end if            
+            end if
     end do
-    
+
     do ii = 0, Npts-1
             ss(ii) = ii*abs(Dels)
     end do
@@ -107,32 +108,32 @@ subroutine gen_grid()
     do ii = 0, Npts-1
             cosCLat(ii) = cos(Clat(ii))
     end do
-    
+
     Allocate(y(0:num_u3-1))
     y(0) = cosCLat(0)
     do ii = 1, num_u3_half-1
-           
+
             do jj = 0,Npts-1
                 if (ss(jj).lt.s(ii)) then
                        temp = jj
                 end if
             end do
-            
+
             y(ii) = cosCLat(temp)+(cosCLat(temp)-cosCLat(temp-1))*(s(ii)-ss(temp))/(ss(temp)-ss(temp-1))
             y(num_u3-1-ii) = -y(ii) !fill other hemisphere
 
     end do
-    
+
     y(num_u3-1) = -y(0)
     y(num_u3_half) = 0.0        !equator point
 
     !c prefix for canonical form
-    
+
     Allocate(ccosth(0:num_u3-1))
     Allocate(cr(0:num_u3-1))
     Allocate(mu(0:num_u3-1))
     ccosth0 = y(0)
-    
+
     do ii = 0, num_u3-1
             ccosth(ii) = y(ii)
             cr(ii) = LVal*(1.0-y(ii)**2)        !cononical field line radial distance from center of earth (in Re)
@@ -140,7 +141,7 @@ subroutine gen_grid()
     end do
 
     write(*,*) "Number of cells = ",num_u3," rtop = ", maxval(cr)
-    
+
     !Setup nu grid
     numin = -r_iono/LMin
     numax = -r_iono/LMax
@@ -149,7 +150,7 @@ subroutine gen_grid()
     do ii = 0, num_u1-1
             u1(ii) = ii*del_u1+numin
     end do
-    
+
     Allocate(r_arr(0:num_u1-1,0:num_u3-1))
     Allocate(sinth2(0:num_u1-1,0:num_u3-1))
     Allocate(costh2(0:num_u1-1,0:num_u3-1))
@@ -171,7 +172,7 @@ subroutine gen_grid()
 
     !Northern Hemisphere
     Allocate(rinit(0:num_u3_half-1))
-   
+
     do ii = 0, num_u1-1
             rinit = r_iono/sqrt(abs(mu(0:num_u3_half-1)*costh0(ii,0)))
             call New_r(rinit,u1(ii),mu(0:num_u3_half-1),costh02(ii,0),r_iono,r_arr(ii,0:num_u3_half-1),num_u3_half)
@@ -221,30 +222,30 @@ subroutine gen_grid()
     Allocate(z_arr(0:num_u1-1,0:num_u3-1))
     z_arr(:,:) = (r_arr-1.0)*re         !heights from earth surface (m)
     d3 = -1.0
-    
+
     Allocate(g11(0:num_u1-1,0:num_u3-1))
     Allocate(gsup11(0:num_u1-1,0:num_u3-1))
-    Allocate(h1(0:num_u1-1,0:num_u3-1))    
+    Allocate(h1(0:num_u1-1,0:num_u3-1))
     g11(:,:) = (r_arr(:,:)/costh0(:,:))**4/r_iono**2/bfac(:,:)**2*((1.0-r_iono/r_arr(:,:))**2+costh2(:,:)*bfac(0,0)**2*0.25/sinth2(:,:))
     gsup11(:,:) = r_iono**2/r_arr(:,:)**4*sinth2(:,:)*bfac(:,:)
     h1 = 1.0/sqrt(gsup11(:,:))
 
     Allocate(g22(0:num_u1-1,0:num_u3-1))
     Allocate(gsup22(0:num_u1-1,0:num_u3-1))
-    Allocate(h2(0:num_u1-1,0:num_u3-1))    
+    Allocate(h2(0:num_u1-1,0:num_u3-1))
     g22 = r_arr(:,:)**2*sinth2(:,:)
     gsup22 = 1.0/g22(:,:)
     h2 = sqrt(g22(:,:))
-    
+
     Allocate(g13(0:num_u1-1,0:num_u3-1))
     Allocate(gsup13(0:num_u1-1,0:num_u3-1))
     g13 = dmudx(:,:)*r_arr(:,:)**4*costh(:,:)*0.5/r_iono**2/costh0(:,:)/bsqrt(:,:)**2
     gsup13 = -0.5*r_iono**3/r_arr(:,:)**5*sinth02(:,:)*costh(:,:)/costh0**3*bfac/dmudx(:,:)
-    
+
 
     Allocate(g33(0:num_u1-1,0:num_u3-1))
     Allocate(gsup33(0:num_u1-1,0:num_u3-1))
-    Allocate(h3(0:num_u1-1,0:num_u3-1))   
+    Allocate(h3(0:num_u1-1,0:num_u3-1))
     Allocate(h30(0:num_u1-1,0:num_u3-1))
     g33 = (dmudx(:,:)*r_arr(:,:)**3/r_iono**2*costh0/bsqrt)**2
     gsup33 = r_iono**4/r_arr(:,:)**6/costh0**6*(costh2(:,:)*bfac(:,:)**2*0.25 + sinth2(:,:)*(1.0-r_iono/r_arr(:,:))**2)/dmudx(:,:)**2
@@ -282,8 +283,16 @@ subroutine gen_grid()
     !scale factors mapped to ground in spherical coords
     hthg_S = hthatm_S/r_iono
     hphig_S = hphiatm_S/r_iono
-     
-    write(*,*) 'Grid Generation Finished!!!'        
+
+    Allocate(dels_arr(0:num_u3-1))
+    Allocate(outerlength(0:num_u3-1))
+    dels_arr = sqrt((cshift(x_arr(num_u1-1,:),-1)-cshift(x_arr(num_u1-1,:),0))**2 + &
+      (cshift(y_arr(num_u1-1,:),-1)-cshift(y_arr(num_u1-1,:),0))**2)
+    dels_arr(0) = 0.0
+    outerlength = sum_cumulative(dels_arr)
+
+
+    write(*,*) 'Grid Generation Finished!!!'
 
 
 end subroutine gen_grid
@@ -309,7 +318,7 @@ subroutine New_r(r0,u1,u3,costh02,RI,ans,num_u3_half)
             r0(:) = ans(:)
             ii = ii+1;
     end do
-    
+
 
 end subroutine New_r
 
