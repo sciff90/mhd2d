@@ -40,7 +40,7 @@ subroutine get_basisfn()
 
     !Coefficient Arrays
     double precision,dimension(:,:),allocatable :: b3coef,b3b3,psifaci,&
-      psifacg,psiicoef,psigcoef,psiib3_S,psigb3_S,psigb3_N,psiib3_N
+      psifacg,psiicoef,psigcoef
     double precision,dimension(:),allocatable :: nufacg,nufaci,nufac0,temp_trans
 
     do sets = 0, nbsets-1

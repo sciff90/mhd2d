@@ -19,9 +19,6 @@ subroutine get_Va()
         double precision,dimension(0:num_u1-1) :: musigp,musigh,musig0,musigzz
         double precision,dimension(0:num_u1-1) :: sigtt,sigtp,sigpt,sigpp
         double precision,dimension(0:num_u1-1) :: sig11,sig12,sig21,sig22,sigden
-        double precision,dimension(0:num_u1-1) :: e1b1atm_N,e1b2atm_N,e2b1atm_N,e2b2atm_N
-        double precision,dimension(0:num_u1-1) :: e1b1atm_S,e1b2atm_S,e2b1atm_S,e2b2atm_S
-
 
         !Ionospheric Data File Arrays
         double precision,dimension(0:num_u1-1,0:num_u3-1) :: No_N,Mav,Temp
@@ -58,7 +55,14 @@ subroutine get_Va()
          !Allocations
          allocate(eps_arr(0:num_u1-1,0:Num_u3-1))
          allocate(va2_arr(0:num_u1-1,0:Num_u3-1))
-
+         allocate(e1b1atm_N(0:num_u1-1))
+         allocate(e1b1atm_S(0:num_u1-1))
+         allocate(e1b2atm_N(0:num_u1-1))
+         allocate(e1b2atm_S(0:num_u1-1))
+         allocate(e2b1atm_N(0:num_u1-1))
+         allocate(e2b1atm_S(0:num_u1-1))
+         allocate(e2b2atm_N(0:num_u1-1))
+         allocate(e2b2atm_S(0:num_u1-1))
          !Magnetic Field Strength
          do ii = 0, num_u3-1
                  Lval_arr(:,ii) = x_arr(:,num_u3_half)

@@ -17,7 +17,7 @@ module global
       double precision,parameter :: Lval = 6.0      !conoical L value
       double precision,parameter :: LMin = 2.0      !min L
       double precision,parameter :: LMax = 10.0     !max L
-      integer,parameter :: num_u1 = 151    !number of field lines
+      integer,parameter :: num_u1 = 51    !number of field lines
       double precision,parameter :: Re = 6378.388e3 !Re in metres
       double precision,parameter :: z0 = 80.0e3     !height of ionospheric thin sheet current (in) m
       double precision,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
@@ -47,6 +47,8 @@ module global
       double precision,dimension(:),allocatable :: hratm_N,hthatm_N,hphiatm_N,hthg_N,hphig_N
       double precision,dimension(:),allocatable :: hratm_S,hthatm_S,hphiatm_S,hthg_S,hphig_S
       double precision,dimension(:,:),allocatable :: sigp_arr,sigh_arr,sig0_arr,eta_arr
+      double precision,dimension(:),allocatable :: e1b1atm_N,e1b2atm_N,e2b1atm_N,e2b2atm_N
+      double precision,dimension(:),allocatable :: e1b1atm_S,e1b2atm_S,e2b1atm_S,e2b2atm_S
 
 
       double precision,dimension(:,:),allocatable :: costh,va2_arr,eps_arr
@@ -58,7 +60,8 @@ module global
       double precision,dimension(:,:),allocatable:: gg12,gg21,e1e1,e1e2,e1f1,&
         e1f2,f1b2,e2e1,e2e2,e2f1,e2f2,f2b1,f2b3,e3b23,b1e2,b2e1,b2e3,b3e2,&
         e1esup1,e1e3,e3b21
-      complex*16,dimension(:,:),allocatable :: f1b3,e3b1,e3b3,b1e3,b3e1
+      complex*16,dimension(:,:),allocatable :: f1b3,e3b1,e3b3,b1e3,b3e1,&
+        psiib3_N,psiib3_S,psigb3_S,psigb3_N
       double precision :: dx2,dxsq
 
 

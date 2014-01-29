@@ -32,7 +32,7 @@ Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
 LVal		= 6.0             		; Cononical L Value
 LMin		= 2.0             		; min L
 LMax		= 10.0            		; max L
-Num_u1		= 151           		; number of field lines (should be even)
+Num_u1		= 51           		; number of field lines (should be even)
 Re			= 6378.388e3          	; Re in m
 
 z0			= 80.0e3             	; height of ionospheric thin sheet current  (in m)
@@ -1408,7 +1408,7 @@ while (iplot lt nplots) do begin
   t 	= t+dt									; Time
 
 Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Driver, OuterLength
-stop
+;stop
 ; shift ei's
     e1p3 	= shift(e1,0,-1)
     e1m3 	= shift(e1,0,1)
@@ -1486,7 +1486,7 @@ stop
 ;    b3[0,*] 		= (4.0*b3(2,*) - b3(4,*))/3.0					; Bob's fortran
     b3[num_u1-1,*] 	= Driver*evens_u3     		 					; Outer L Shell Boundary add driver boundary here
 
-stop
+;stop
 ; shift bi's
     b1p3 	= shift(b1,0,-1)
     b1m3 	= shift(b1,0,1)
@@ -1523,7 +1523,7 @@ stop
     Av_f2	=(shift(f2,1,0) + shift(f2,-1,0))/2
     Av_f2(0,*)			= 0.0
     Av_f2(Num_u1-1,*)	= 0.0
-stop
+;stop
 
 ;	Need to shift e's to all grid lvls with e1 and e2
 	Av_esup1 			= (shift(esup1,1,0) + shift(esup1,-1,0))/2 			; 	need e1 at e2 locations (e2 is not on boundaries)
@@ -1547,7 +1547,7 @@ stop
     Av_b3 		= (Shift(b3,1,1) + Shift(b3,1,-1) + Shift(b3,-1,1) + Shift(b3,-1,-1))/ 4.d0		; 	need b3 at e3 (and b1) locations (not on any boundaries)
     Av_b3(*,0)	= 0.0 		& 	Av_b3(*,Num_u3-1)	= 0.0
     Av_b3(0,*)	= 0.0 		& 	Av_b3(Num_u1-1,*)	= 0.0
-
+;stop
 ;	Need to put the db2du3 derivatives on the right grid point for a yee grid and the fact we have a non orthognal system
 	db2_d3 		= (b2p3-b2m3)
     db2_d3(*,0)	= 0.0 		& 	db2_d3(*,Num_u3-1)	= 0.0			; 	Clean up after shifts (not on any boundaries)
@@ -1560,7 +1560,7 @@ stop
 
 	Av_db2_d3(*,0)	= 0.0 		& 	Av_db2_d3(*,Num_u3-1)	= 0.0 	; 	Clean up after shifts (not on any boundaries)
     Av_db2_d3(0,*)	= 0.0 		& 	Av_db2_d3(Num_u1-1,*)	= 0.0
-
+;stop
 ; 	advance eparallel
 ; 	-----------------------------------------------------------
     e3 		= e3b21*(b2p1-b2m1) + e3b23*(Av_db2_d3) + e3b1*b1  + e3b3*Av_b3
@@ -1589,7 +1589,7 @@ stop
 
     esup1(0,0)			=(4*esup1(2,0)-esup1(4,0))/3.0						; Bob's fortran
     esup1(num_u1-1,0)	=(4*esup1(num_u1-3,0)-esup1(num_u1-5,0))/3.0
-
+;stop
 
 
 
@@ -1668,7 +1668,7 @@ stop
 
     e1[*,num_u3-1] 	= (e1b1atm_S*b1dif_S + e1b2atm_S*b2dif_S)*evens_u1
     e2[*,num_u3-1] 	= (e2b1atm_S*b1dif_S + e2b2atm_S*b2dif_S)*odds_u1
-
+;stop
 
 ;; temporary ionospheric bc - for testing perfectly reflecting Ionosphere (thin sheet)
 ;  e1[*,0]=0.0d0
@@ -1792,7 +1792,7 @@ psigp[num_u1-1] = psig[num_u1-3] + 3.d0*(psig[num_u1-1]-psig[num_u1-2])
 psigm[0] = psig[2] + 3.d0*(psig[0]-psig[1])
 bxg_S = (psigp-psigm)/dx2/hthg_S
 byg_S = im*psig/hphig_S
-
+stop
 
 Label = StrTrim(string(format='(I4)',iplot),1)
 If iplot LT 1 Then Label=Label
@@ -2061,7 +2061,7 @@ Driver				= Amp*spatial*tdep
 Driver(0)			= 0.0
 Driver(Num_u3-1)	= 0.0
 
-stop
+;stop
 end			; End of Driver
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
