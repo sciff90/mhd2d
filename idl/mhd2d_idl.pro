@@ -548,7 +548,7 @@ psiicoef	= b3coef*psifaci
 psigcoef	= b3coef*psifacg
 psiib3_S 	= ev # psiicoef   			;	now b3b3 should be nxp1 x nxp1 unit matrix
 psigb3_S 	= ev # psigcoef
-
+stop
 ;	For Northern Ionosphere/Atmopshere
 psifaci		= nufaci#hratm_N(Eidx)
 psifacg		= nufacg#hratm_N(Eidx)
@@ -1410,6 +1410,7 @@ while (iplot lt nplots) do begin
 Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Driver, OuterLength
 ;stop
 ; shift ei's
+    
     e1p3 	= shift(e1,0,-1)
     e1m3 	= shift(e1,0,1)
     e1p3[*,num_u3-1]= 0.0
@@ -1429,7 +1430,8 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
     e3m1 	= shift(e3,1,0)
     e3p1[num_u1-1,*]= 0.0
     e3m1[0,*] 		= 0.0; 	advance bsupi
-; -----------------------------------------------------------
+; -----------------------------------------------------------i
+
     bsup1 = bsup1 + b1e2*(e2p3-e2m3) + b1e3*e3
     bsup2 = bsup2 + b2e1*(e1p3-e1m3) + b2e3*(e3p1-e3m1)
     bsup3 = bsup3 + b3e1*e1 + b3e2*(e2p1-e2m1)
@@ -1563,6 +1565,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
 ;stop
 ; 	advance eparallel
 ; 	-----------------------------------------------------------
+;stop
     e3 		= e3b21*(b2p1-b2m1) + e3b23*(Av_db2_d3) + e3b1*b1  + e3b3*Av_b3
 
     e3[0,*] = 0.0	&     e3[num_u1-1,*] = 0.0 						; 	Clean up after shifts (not on any boundaries)
@@ -1599,7 +1602,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
 ;;	Extrap_1D,bsup3_n,u1,0
 ;	bsup3_n(0)	= bsup3[0,0]
 ;	bsup3_n(Num_u1-1)	= bsup3[Num_u1-1,0]
-
+stop
 	bsup3_n 	= bsup3[Eidx,0]					; Only using B3 points to do fit
     psiatm_N 	= psiib3_N # bsup3_n  			; Nth hemis
 

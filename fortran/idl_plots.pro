@@ -49,10 +49,11 @@ pro idl_plots
   im = dcomplex(0.0)
   bsup3_n = dcomplexarr(num_u1/2+1)
   bsup3_s = dcomplexarr(num_u1/2+1)
+  tt = 0.0d
 
   openr,unit1, data_dir +'plot_data0010.dat',/get_lun,/F77_UNFORMATTED
   readu,unit1,tt,$
-       Enu_M, Eph_M, Emu_M, Bnu_M, Bph_M, Bmu_M, $
+       Enu, Eph, Emu, Bnu, Bph, Bmu, $
        b1_N, b1atm_N, b2_N, b2atm_N, $
        b1_S, b1atm_S, b2_S, b2atm_S, $
        psiatm_N, psiatm_S, $

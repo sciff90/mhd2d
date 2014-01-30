@@ -77,13 +77,13 @@ subroutine iterate()
     e2p1(num_u1-1,:) = 0.0
     e2m1(0,:) = 0.0
 
-    e2p3 = cshift(e1,shift=1,dim=2)
-    e2m3 = cshift(e1,shift=-1,dim=2)
+    e2p3 = cshift(e2,shift=1,dim=2)
+    e2m3 = cshift(e2,shift=-1,dim=2)
     e2p3(:,num_u3-1) = 0.0
     e2m3(:,0) = 0.0
 
-    e3p1 = cshift(e1,shift=1,dim=2)
-    e3m1 = cshift(e1,shift=-1,dim=2)
+    e3p1 = cshift(e3,shift=1,dim=1)
+    e3m1 = cshift(e3,shift=-1,dim=1)
     e3p1(num_u1-1,:) = 0.0
     e3m1(0,:) = 0.0
 
@@ -164,7 +164,7 @@ subroutine iterate()
     ! Outer L Shell Boundary add driver boundary here
     b3(num_u1-1,:) = Driver*evens_u3
 
-    b1p3 = cshift(b1,shift= 1,dim=1)
+    b1p3 = cshift(b1,shift= 1,dim=2)
     b1m3 = cshift(b1,shift=-1,dim=2)
     b1p3(:,num_u3-1)= 0.0
     b1m3(:,0) = 0.0
@@ -504,6 +504,11 @@ subroutine iterate()
        bxg_N, byg_N, bxg_S, byg_S
       close(unit=10)
       write(*,*) 'File Written to:',filename
+
+      write(filename,'(a,i4.4,a4)'),'./data/emu',iplot,'.dat'
+      open(unit=10,file=filename,form='formatted')
+      write(10,*) emu_M
+      close(10)
 
 
       tpnext = tpnext+dtplot

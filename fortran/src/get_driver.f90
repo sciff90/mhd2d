@@ -39,6 +39,8 @@ subroutine get_driver(tt,u3,driver)
 
   !The Driver
   Driver = Amp*spatial*tdep
+  !test driver
+  !driver = 1.0
   Driver(0) = 0.0
   Driver(Num_u3-1) = 0.0
 

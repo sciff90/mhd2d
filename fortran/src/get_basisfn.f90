@@ -4,7 +4,7 @@ subroutine get_basisfn()
     implicit none
 
     double precision,parameter :: scaleup = 4
-    integer,parameter :: NBsets = 2
+    integer,parameter :: NBsets = 1
     integer,parameter :: nmodes = int(num_u1*modefrac)
     integer,parameter :: nm = nmodes-1
 
