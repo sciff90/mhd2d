@@ -64,7 +64,6 @@ subroutine iterate()
   do while (iplot .lt. nplots)
     tt = tt+dt
     call get_driver(tt,u3,driver)
-    write(*,*)'tt = ',tt
 
     !shift ei's
     e1p3 = cshift(e1,shift=1,dim=2)
@@ -504,12 +503,6 @@ subroutine iterate()
        bxg_N, byg_N, bxg_S, byg_S
       close(unit=10)
       write(*,*) 'File Written to:',filename
-
-      write(filename,'(a,i4.4,a4)'),'./data/emu',iplot,'.dat'
-      open(unit=10,file=filename,form='formatted')
-      write(10,*) emu_M
-      close(10)
-
 
       tpnext = tpnext+dtplot
 

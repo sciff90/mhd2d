@@ -17,7 +17,7 @@ module global
       double precision,parameter :: Lval = 6.0      !conoical L value
       double precision,parameter :: LMin = 2.0      !min L
       double precision,parameter :: LMax = 10.0     !max L
-      integer,parameter :: num_u1 = 51    !number of field lines
+      integer,parameter :: num_u1 = 151    !number of field lines
       double precision,parameter :: Re = 6378.388e3 !Re in metres
       double precision,parameter :: z0 = 80.0e3     !height of ionospheric thin sheet current (in) m
       double precision,parameter :: r_iono = 1.0+z0/re   !start altitude from earth centre
