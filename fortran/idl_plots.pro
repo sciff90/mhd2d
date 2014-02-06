@@ -63,7 +63,7 @@ pro idl_plots
        bxg_N, byg_N, bxg_S, byg_S
   close,unit1
   free_lun,unit1
-  print,'data0001.dat loaded!!!'
+  print,'data0010.dat loaded!!!'
   stop
 
 end

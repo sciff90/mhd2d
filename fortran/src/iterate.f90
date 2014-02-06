@@ -26,6 +26,7 @@ subroutine iterate()
   integer*4 :: ii,jj,kk,tpnext
   integer*4 :: iplot,nplots
   double precision :: tt
+  integer :: reclength
 
   !Strings
   character(len=100) :: filename
@@ -341,7 +342,7 @@ subroutine iterate()
     e2(:,0) = (e2b1atm_N*b1dif_N + e2b2atm_N*b2dif_N)*odds_u1
 
     !Southern Ionospheric Sheet
-    !bsup3_s 	= (bsup3(*,Num_u3-1) + (cshift(bsup3(:,Num_u3-1,-1)
+    !bsup3_s 	= (bsup3(*,Num_u3-1) + (cshift(bsup3a:,Num_u3-1,-1)
     !                                +cshift(bsup3(:,Num_u3-1),1))/2.0)
     !call Extrap_1D(bsup3_s,u1,0)
     !bsup3_s(0)	= bsup3(0,Num_u3-1)
@@ -476,9 +477,16 @@ subroutine iterate()
 
       if(iplot.eq.1)then
         write(filename,*),'./data/plotting_constants.dat'
-        open(unit=10,file=filename,form='unformatted')
 
-        write(10)&
+        inquire(iolength = reclength) num_u1,num_u3,&
+                                      va2_arr,&
+                                      x_arr,y_arr,&
+                                      Eidx,dx2
+
+        open(unit=10,file=filename,form='unformatted',access='direct',&
+        recl = reclength)
+
+        write(10,rec=1)&
           num_u1,num_u3,&
           sqrt(Va2_arr),&
           x_arr,y_arr,&
@@ -488,10 +496,24 @@ subroutine iterate()
       end if
 
       !Output from iterate
+      !inquire(iolength = reclength)
       write(filename,'(a,i4.4,a4)'),'./data/plot_data',iplot,'.dat'
-      open(unit=10,file=filename,form='unformatted')
+      inquire(iolength=reclength) tt,&
+       Enu_M, Eph_M, Emu_M, Bnu_M, Bph_M, Bmu_M, &
+       b1_N, b1atm_N, b2_N, b2atm_N, &
+       b1_S, b1atm_S, b2_S, b2atm_S, &
+       psiatm_N, psiatm_S, &
+       im, &
+       bsup3_n,  bsup3_s, &
+       hratm_N, hratm_S, &
+       bxg_N, byg_N, bxg_S, byg_S
 
-      write(10)&
+     open(unit=10, file=filename,&
+                    form='unformatted',&
+                    access='direct',&
+                    recl= reclength)
+
+      write(10,rec=1)&
        tt,&
        Enu_M, Eph_M, Emu_M, Bnu_M, Bph_M, Bmu_M, &
        b1_N, b1atm_N, b2_N, b2atm_N, &

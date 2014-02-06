@@ -2,7 +2,7 @@ module global
       implicit none
 
       !Time Parameters
-      double precision,parameter :: tmax = 10.0      !Max run time in Seconds
+      double precision,parameter :: tmax = 300.0      !Max run time in Seconds
       double precision,parameter :: cour = 0.85     !fraction of courant number
       double precision,parameter :: dtplot = 1.0
 

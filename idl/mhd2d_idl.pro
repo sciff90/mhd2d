@@ -12,7 +12,7 @@ Pro mhd2d_idl
 ;	v6 MDS - 21st Feb 2013 - New (improved) Grid generation (fix for cononical field line length)
 
 ;	Time Parameters
-tmax		= 10.0	             	; sets max run time [in sec]
+tmax		= 100.0	             	; sets max run time [in sec]
 cour		= 0.85					; Fraction of Courant number to use in time step
 dtplot		= 1.0               	; plot every...X seconds
 m			= 2.0               	; azimuthal variation (wave number)
@@ -21,9 +21,9 @@ drive0		= 10.0e-9             	; amplitude of driver (T)
 Freq  		= 0.010					; Frequency of driver (in Hz)
 
 ;	Directories
-Pth			= '/home/gareths/Data/mhd2d/idl/data/'					; Directory for data file
-out_pth		= '/home/gareths/Data/mhd2d/idl/plots/'					; Directiory for images
-inp_pth		= '/home/gareths/Code/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
+Pth			= '/media/Raid_Data/Data/mhd2d/idl/data/'					; Directory for data file
+out_pth		= '/media/Raid_Data/Data/mhd2d/idl/plots/'					; Directiory for images
+inp_pth		= '/media/Raid_Data/Code/University/Physics/MHD/mhd2d/idl/iono_data/'				; Directory for Ionopsheric data (eg. Conductances etc)
 Neutral_file= inp_pth+'NeutralAtm_Min_Mod.txt'					; Neutral Atmosphere File
 plot_png 	= 1												; 1= plot png files
 Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
@@ -32,7 +32,7 @@ Plot_fields = 1												; 1 = plot e,b fields each dtplot time step
 LVal		= 6.0             		; Cononical L Value
 LMin		= 2.0             		; min L
 LMax		= 10.0            		; max L
-Num_u1		= 51           		; number of field lines (should be even)
+Num_u1		= 151           		; number of field lines (should be even)
 Re			= 6378.388e3          	; Re in m
 
 z0			= 80.0e3             	; height of ionospheric thin sheet current  (in m)
@@ -1602,7 +1602,7 @@ Get_Driver,   drive0, freq, t, h3, h30, u3, num_u3_half, num_u1, num_u3, Re, Dri
 ;;	Extrap_1D,bsup3_n,u1,0
 ;	bsup3_n(0)	= bsup3[0,0]
 ;	bsup3_n(Num_u1-1)	= bsup3[Num_u1-1,0]
-stop
+;stop
 	bsup3_n 	= bsup3[Eidx,0]					; Only using B3 points to do fit
     psiatm_N 	= psiib3_N # bsup3_n  			; Nth hemis
 
@@ -1795,7 +1795,7 @@ psigp[num_u1-1] = psig[num_u1-3] + 3.d0*(psig[num_u1-1]-psig[num_u1-2])
 psigm[0] = psig[2] + 3.d0*(psig[0]-psig[1])
 bxg_S = (psigp-psigm)/dx2/hthg_S
 byg_S = im*psig/hphig_S
-stop
+;stop
 
 Label = StrTrim(string(format='(I4)',iplot),1)
 If iplot LT 1 Then Label=Label
