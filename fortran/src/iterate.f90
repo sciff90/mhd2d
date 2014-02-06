@@ -15,7 +15,7 @@ subroutine iterate()
   complex*16,dimension(0:num_u1-1,0:num_u3-1) :: e1p3,e1m3,e2p1,e2m1,e2p3,&
     e2m3,e3p1,e3m1,av_bsup1,av_bsup3,b2m3,b3p1,b3m1,b1p3,b1m3,b2p1,b2m1,b2p3,&
     f1,av_f1,f2,av_f2,av_b3,db2_d3,av_db2_d3,av_esup1,av_esup2,av_e3,&
-    bnu_M,bph_M,bmu_M,enu_M,eph_M,emu_M
+    bnu_M,bph_M,bmu_M,enu_M,eph_M,emu_M,e1p3_t,e1m3_t
   complex*16,dimension(0:num_u1/2) :: bsup3_n,bsup3_s
   complex*16,dimension(0:num_u1-1) :: psiatm_N,psiatmp,psiatmm,b1atm_N,&
     b2atm_N,b1_N,b2_N,b1dif_N,b2dif_N,b2atm_S,b1_S,b2_S,b1dif_S,b2dif_S,&
@@ -27,8 +27,21 @@ subroutine iterate()
   integer*4 :: iplot,nplots
   double precision :: tt
 
+
   !Strings
   character(len=100) :: filename
+
+  !Index Arrays
+  integer,dimension(:),allocatable :: evenz,evenx,oddx,oddz,&
+                                      oddxp,oddxm,oddzp,oddzm,&
+                                      evenxp,evenxm,evenzm,evenzp,&
+                                      evenxp3,evenxm3,oddxp3,oddxm3
+  integer :: nxhalf,nzhalf,nx,nz
+
+  nx=num_u1-1
+  nz=num_u3-1
+  nxhalf=nx/2
+  nzhalf=nz/2
 
 
   do ii = 0, num_u3/2-1
@@ -60,40 +73,111 @@ subroutine iterate()
   iplot = 0
   tt=0.0
 
+
+  !Define Index arrays
+  allocate( evenz(0:nzhalf),oddz(nzhalf),evenx(0:nxhalf),oddx(nxhalf),&
+            oddxp(nxhalf),oddxm(nxhalf),oddzp(nzhalf),oddzm(nzhalf))
+
+  allocate( evenxp(0:nxhalf),evenxm(0:nxhalf),evenzp(0:nzhalf),&
+            evenzm(0:nzhalf),oddxp3(nxhalf),oddxm3(nxhalf),&
+            evenxm3(0:nxhalf),evenxp3(0:nxhalf))
+
+
+  do ii=0,nzhalf
+    evenz(ii)=2*ii
+  enddo
+  do ii=1,nzhalf
+    oddz(ii)=2*ii-1
+  enddo
+  do ii=0,nxhalf
+    evenx(ii)=2*ii
+  enddo
+  do ii=1,nxhalf
+    oddx(ii)=2*ii-1
+  enddo  
+
+  oddxp=evenx(1:nxhalf)
+  oddxm=evenx(0:nxhalf-1)
+  oddzp=evenz(1:nzhalf)
+  oddzm=evenz(0:nzhalf-1)
+  evenxp(0:nxhalf-1)=oddx
+  evenxp(nxhalf)=oddx(nxhalf)
+  evenxm(1:nxhalf)=oddx
+  evenxm(0)=oddx(1)
+  evenzp(0:nzhalf-1)=oddz
+  evenzp(nzhalf)=oddz(nzhalf)
+  evenzm(1:nzhalf)=oddz
+  evenzm(0)=oddz(1)
+  oddxp3=min(oddx+3,nx)
+  oddxm3=max(oddx-3,0)
+  evenxp3=min(evenx+3,nx-1)
+  evenxm3=max(evenx-3,1)
+
   write(*,*)'Starting Time Loop'
   do while (iplot .lt. nplots)
     tt = tt+dt
     call get_driver(tt,u3,driver)
-    write(*,*)'tt = ',tt
+    !write(*,*)'tt = ',tt
+
 
     !shift ei's
-    e1p3 = cshift(e1,shift=1,dim=2)
-    e1m3 = cshift(e1,shift=-1,dim=2)
-    e1p3(:,num_u3-1) = 0.0
-    e1m3(:,0) = 0.0
+!    e1p3 = cshift(e1,shift=1,dim=2)
+    !e1m3 = cshift(e1,shift=-1,dim=2)
+    !e1p3(:,num_u3-1) = 0.0
+    !e1m3(:,0) = 0.0
+!!    do kk=0, nz,2
+     !!e1m3_t = e1(evenx,kk+1)
+     !!e1p3_t = e1(evenx,kk-1)
+    !!end do
+    !e1p3_t(:,num_u3-1) = 0.0
+    !e1m3_t(:,0) = 0.0
 
-    e2p1 = cshift(e2,shift=1,dim=1)
-    e2m1 = cshift(e2,shift=-1,dim=1)
-    e2p1(num_u1-1,:) = 0.0
-    e2m1(0,:) = 0.0
 
-    e2p3 = cshift(e2,shift=1,dim=2)
-    e2m3 = cshift(e2,shift=-1,dim=2)
-    e2p3(:,num_u3-1) = 0.0
-    e2m3(:,0) = 0.0
+    !e2p1 = cshift(e2,shift=1,dim=1)
+    !e2m1 = cshift(e2,shift=-1,dim=1)
+    !e2p1(num_u1-1,:) = 0.0
+    !e2m1(0,:) = 0.0
 
-    e3p1 = cshift(e3,shift=1,dim=1)
-    e3m1 = cshift(e3,shift=-1,dim=1)
-    e3p1(num_u1-1,:) = 0.0
-    e3m1(0,:) = 0.0
+    !e2p3 = cshift(e2,shift=1,dim=2)
+    !e2m3 = cshift(e2,shift=-1,dim=2)
+    !e2p3(:,num_u3-1) = 0.0
+    !e2m3(:,0) = 0.0
+
+    !e3p1 = cshift(e3,shift=1,dim=1)
+    !e3m1 = cshift(e3,shift=-1,dim=1)
+    !e3p1(num_u1-1,:) = 0.0
+    !e3m1(0,:) = 0.0
 
     !Advance bsupi
-    bsup1 = bsup1 + b1e2*(e2p3-e2m3) + b1e3*e3
-    bsup2 = bsup2 + b2e1*(e1p3-e1m3) + b2e3*(e3p1-e3m1)
-    bsup3 = bsup3 + b3e1*e1 + b3e2*(e2p1-e2m1)
+    !bsup1 = bsup1 + b1e2*(e2p3-e2m3) + b1e3*e3
+    !bsup2 = bsup2 + b2e1*(e1p3-e1m3) + b2e3*(e3p1-e3m1)
+    !bsup3 = bsup3 + b3e1*e1 + b3e2*(e2p1-e2m1)
+    !$OMP PARALLEL
+    !$OMP DO PRIVATE(ii)
+      do ii=1,nx-1,2
+        bsup1(ii,oddz)= bsup1(ii,oddz)+b1e2(ii,oddz)*(e2(ii,oddzp)-&
+                        e2(ii,oddzm))+b1e3(ii,oddz)*e3(ii,oddz)
+      enddo
+    !$OMP END DO
+
+    !$OMP DO PRIVATE(kk)
+      do kk=1,nz-1,2
+        bsup2(evenx,kk) = bsup2(evenx,kk)+b2e1(evenx,kk)*(e1(evenx,kk+1)-&
+                          e1(evenx,kk-1))+b2e3(evenx,kk)*(e3(evenxp,kk)-&
+                          e3(evenxm,kk))
+      enddo
+    !$OMP END DO
+
+    !$OMP DO PRIVATE(kk)
+      do kk=0,nz,2
+        bsup3(evenx,kk) = bsup3(evenx,kk)+b3e1(evenx,kk)*e1(evenx,kk)+&
+                          b3e2(evenx,kk)*(e2(evenxp,kk)-e2(evenxm,kk))
+      enddo
+    !$OMP END DO
 
 
-  !  !Inner L shell Perfectly reflecting
+    !OMP SINGLE
+  ! !Inner L shell Perfectly reflecting
     !if (ixbc_0 eq 0) then
       !bsup3(0,*) = 0.d0
       !bsup3(0,0) = 0.d0
@@ -119,157 +203,320 @@ subroutine iterate()
       bsup3(num_u1-1,num_u3-1)= (4.0*bsup3(num_u1-3,num_u3-1) &
                                 - bsup3(num_u1-5,num_u3-1))/3.0
     !end if
+    !OMP END SINGLE
 
     !average bsups
-    av_bsup1 = (cshift(cshift(bsup1,shift=-1,dim=2),shift=-1,dim=1) + &
-                cshift(cshift(bsup1,shift= 1,dim=2),shift=-1,dim=1) + &
-                cshift(cshift(bsup1,shift=-1,dim=2),shift= 1,dim=1) + &
-                cshift(cshift(bsup1,shift= 1,dim=2),shift= 1,dim=1))/4.0
+!    av_bsup1 = (cshift(cshift(bsup1,shift=-1,dim=2),shift=-1,dim=1) + &
+                !cshift(cshift(bsup1,shift= 1,dim=2),shift=-1,dim=1) + &
+                !cshift(cshift(bsup1,shift=-1,dim=2),shift= 1,dim=1) + &
+                !cshift(cshift(bsup1,shift= 1,dim=2),shift= 1,dim=1))/4.0
 
-    !Clean up after shifts due to odd number of points
-    Av_bsup1(:,0) = 0.0
-    Av_bsup1(:,Num_u3-1) = 0.0
-    Av_bsup1(0,:) = 0.0
-    Av_bsup1(Num_u1-1,:) = 0.0
+!    !for b3 field aligned at North Ionosphere
+    !av_bsup1(:,0) = ( cshift(bsup1(:,1),shift=-1) + &
+                      !cshift(bsup1(:,1),shift=1))/2.0
+    !Av_bsup1(0,0) = 0.0
+    !Av_bsup1(Num_u1-1,0) = 0.0
 
-    !for b3 field aligned at North Ionosphere
-    av_bsup1(:,0) = (cshift(bsup1(:,1),shift=-1) + cshift(bsup1(:,1),shift=1))/2.0
-    Av_bsup1(0,0) = 0.0
-    Av_bsup1(Num_u1-1,0) = 0.0
+    !!for b3 field aligned at Southern Ionosphere
+    !av_bsup1(:,num_u3-1) = (cshift(bsup1(:,num_u3-2),shift=-1) +&
+                            !cshift(bsup1(:,num_u3-2),shift= 1))/2.0
+    !Av_bsup1(0,Num_u3-1) = 0.0
+    !Av_bsup1(Num_u1-1,Num_u3-1) = 0.0
 
-    !for b3 field aligned at Southern Ionosphere
-    av_bsup1(:,num_u3-1) = (cshift(bsup1(:,num_u3-2),shift=-1) +&
-                            cshift(bsup1(:,num_u3-2),shift= 1))/2.0
-    Av_bsup1(0,Num_u3-1) = 0.0
-    Av_bsup1(Num_u1-1,Num_u3-1) = 0.0
 
-    av_bsup3 = (cshift(cshift(bsup3,shift=-1,dim=2),shift=-1,dim=1) + &
-                cshift(cshift(bsup3,shift= 1,dim=2),shift=-1,dim=1) + &
-                cshift(cshift(bsup3,shift=-1,dim=2),shift= 1,dim=1) + &
-                cshift(cshift(bsup3,shift= 1,dim=2),shift= 1,dim=1))/4.0
-    Av_bsup3(:,0) = 0.0
-    Av_bsup3(:,Num_u3-1) = 0.0
-    Av_bsup3(0,:) = 0.0
-    Av_bsup3(Num_u1-1,:) = 0.0
+    !$OMP DO PRIVATE(KK)
+      do kk=2,nz-2,2
+        av_bsup1(evenx,kk)=0.25*(bsup1(evenxp,kk+1)+bsup1(evenxm,kk+1)+&
+                              bsup1(evenxp,kk-1)+bsup1(evenxm,kk-1))
+      enddo
+    !$OMP END DO
+
+
+    !OMP SINGLE
+      !Clean up after shifts due to odd number of points
+      Av_bsup1(:,0) = 0.0
+      Av_bsup1(:,Num_u3-1) = 0.0
+      Av_bsup1(0,:) = 0.0
+      Av_bsup1(Num_u1-1,:) = 0.0
+      !for b3 field aligned at North Ionosphere
+      av_bsup1(evenx,0)=0.5*(bsup1(evenxp,1)+bsup1(evenxm,1))
+      Av_bsup1(0,0) = 0.0
+      Av_bsup1(Num_u1-1,0) = 0.0
+      !for b3 field aligned at South Ionosphere
+      av_bsup1(evenx,nz)=0.5*(bsup1(evenxp,nz-1)+bsup1(evenxm,nz-1))
+      Av_bsup1(0,Num_u3-1) = 0.0
+      Av_bsup1(Num_u1-1,Num_u3-1) = 0.0
+    !OMP END SINGLE
+
+
+
+!    av_bsup3 = (cshift(cshift(bsup3,shift=-1,dim=2),shift=-1,dim=1) + &
+                !cshift(cshift(bsup3,shift= 1,dim=2),shift=-1,dim=1) + &
+                !cshift(cshift(bsup3,shift=-1,dim=2),shift= 1,dim=1) + &
+                !cshift(cshift(bsup3,shift= 1,dim=2),shift= 1,dim=1))/4.0
+    !Av_bsup3(:,0) = 0.0
+    !Av_bsup3(:,Num_u3-1) = 0.0
+    !Av_bsup3(0,:) = 0.0
+    !Av_bsup3(Num_u1-1,:) = 0.0
+    !$OMP DO PRIVATE(kk)
+      do kk=1,nz-1,2
+        bsup3(oddx,kk)=0.25*( bsup3(oddxp,kk+1)+bsup3(oddxm,kk+1)+&
+                              bsup3(oddxp,kk-1)+bsup3(oddxm,kk-1))
+      enddo
+    !$OMP END DO
+    !$OMP SINGLE
+      Av_bsup3(:,0) = 0.0
+      Av_bsup3(:,Num_u3-1) = 0.0
+      Av_bsup3(0,:) = 0.0
+      Av_bsup3(Num_u1-1,:) = 0.0
+    !$OMP END SINGLE
 
     !Rotate to bi
-    b1 = g11*bsup1 + g13*av_bsup3
-    b2 = g22*bsup2
-    b3 = g13*av_bsup1 + g33*bsup3
+!    b1 = g11*bsup1 + g13*av_bsup3
+    !b2 = g22*bsup2
+    !b3 = g13*av_bsup1 + g33*bsup3
+
+    !$OMP DO PRIVATE(kk)
+      do kk=1,nz-1,2
+        b1(oddx,kk)=g11(oddx,kk)*bsup1(oddx,kk)+g13(oddx,kk)*av_bsup3(oddx,kk)
+        b2(evenx,kk)=g22(evenx,kk)*bsup2(evenx,kk)
+      enddo
+    !$OMP END DO
+    !$OMP DO PRIVATE(kk)
+      do kk=0,nz,2
+        b3(evenx,kk)= g13(evenx,kk)*av_bsup1(evenx,kk)+&
+                      g33(evenx,kk)*bsup3(evenx,kk)
+      enddo
+    !$OMP END DO
 
     !b2(0,:) 		= (4.0*b2(2,*) - b2(4,*))/3.0					          !Bob's fortran
     !b2(num_u1-1,:)	= (4.0*b2(num_u1-3,*) - b2(num_u1-5,*))/3.0 !Bob's fortran
     !b3(0,*) 		= (4.0*b3(2,*) - b3(4,*))/3.0					          !Bob's fortran
 
     ! Outer L Shell Boundary add driver boundary here
-    b3(num_u1-1,:) = Driver*evens_u3
+    !$OMP SINGLE
+      b3(num_u1-1,:) = Driver*evens_u3
+    !$OMP END SINGLE
 
-    b1p3 = cshift(b1,shift= 1,dim=2)
-    b1m3 = cshift(b1,shift=-1,dim=2)
-    b1p3(:,num_u3-1)= 0.0
-    b1m3(:,0) = 0.0
+!    b1p3 = cshift(b1,shift= 1,dim=2)
+    !b1m3 = cshift(b1,shift=-1,dim=2)
+    !b1p3(:,num_u3-1)= 0.0
+    !b1m3(:,0) = 0.0
 
-    b2p1 = cshift(b2,shift= 1,dim=1)
-    b2m1 = cshift(b2,shift=-1,dim=1)
-    b2p1(num_u1-1,:)= 0.0
-    b2m1(0,:) = 0.0
+    !b2p1 = cshift(b2,shift= 1,dim=1)
+    !b2m1 = cshift(b2,shift=-1,dim=1)
+    !b2p1(num_u1-1,:)= 0.0
+    !b2m1(0,:) = 0.0
 
-    b2p3 = cshift(b2,shift=1,dim=2)
-    b2m3 = cshift(b2,shift=-1,dim=2)
-    b2p3(:,num_u3-1)= 0.0
-    b2m3(:,0) = 0.0
+    !b2p3 = cshift(b2,shift=1,dim=2)
+    !b2m3 = cshift(b2,shift=-1,dim=2)
+    !b2p3(:,num_u3-1)= 0.0
+    !b2m3(:,0) = 0.0
 
-    b3p1 = cshift(b3,shift=1,dim=1)
-    b3m1 = cshift(b3,shift=-1,dim=1)
-    b3p1(num_u1-1,:)= 0.0
-    b3m1(0,:) = 0.0
+    !b3p1 = cshift(b3,shift=1,dim=1)
+    !b3m1 = cshift(b3,shift=-1,dim=1)
+    !b3p1(num_u1-1,:)= 0.0
+    !b3m1(0,:) = 0.0
 
     !at e1 location used in e1 equation
-    f1 = f1b2*(b2p3-b2m3) + f1b3*b3
+    !f1 = f1b2*(b2p3-b2m3) + f1b3*b3
     !clean up at ends of field lines
-    f1(:,0)= 0.0
-    f1(:,Num_u3-1) = 0.0
+    !f1(:,0)= 0.0
+    !f1(:,Num_u3-1) = 0.0
+
+    !$OMP DO PRIVATE(ii)
+      do ii=0,nx,2
+        f1(ii,evenz)= f1b2(ii,evenz)*(b2(ii,evenzp)-b2(ii,evenzm))+&
+                      f1b3(ii,evenz)*b3(ii,evenz)
+      enddo
+    !$OMP END DO
+
+    !$OMP SINGLE
+      f1(:,0)= 0.0
+      f1(:,Num_u3-1) = 0.0
+    !$OMP END SINGLE
+
 
     !at e2 location used in e2 equation
-    Av_f1 = (cshift(f1,shift=-1,dim=1) + cshift(f1,shift=1,dim=1))/2
-    Av_f1(0,:) = 0.0
-    Av_f1(Num_u1-1,:) = 0.0
+    !Av_f1 =(cshift(f1,shift=-1,dim=1) + cshift(f1,shift=1,dim=1))/2
+    !Av_f1(0,:) = 0.0
+    !Av_f1(Num_u1-1,:) = 0.0
+
 
     !at e2 location used in e2 equation
-    f2 = f2b1*(b1p3-b1m3) + f2b3*(b3p1-b3m1)
-    f2(:,0) = 0.0
-    f2(:,Num_u3-1) = 0.0
+    !f2 = f2b1*(b1p3-b1m3) + f2b3*(b3p1-b3m1)
+    !f2(:,0) = 0.0
+    !f2(:,Num_u3-1) = 0.0
 
-    Av_f2 =(cshift(f2,shift=-1,dim=1) + cshift(f2,shift=1,dim=1))/2
-    Av_f2(0,:) = 0.0
-    Av_f2(Num_u1-1,:) = 0.0
+    !$OMP DO PRIVATE(kk)
+      do kk=2,nz-2,2
+        f2(oddx,kk)= f2b1(oddx,kk)*(b1(oddx,kk+1)-b1(oddx,kk-1))+&
+                     f2b3(oddx,kk)*(b3(oddxp,kk)-b3(oddxm,kk))
+      enddo
+    !$OMP END DO
+
+    !$OMP SINGLE
+      f2(:,0) = 0.0
+      f2(:,Num_u3-1) = 0.0
+    !$OMP END SINGLE   
+
+    !Av_f2 =(cshift(f2,shift=-1,dim=1) + cshift(f2,shift=1,dim=1))/2
+    !Av_f2 = (f2(evenxp,evenz) + f2(evenxm,evenz))/2
+    !Av_f2(0,:) = 0.0
+    !Av_f2(Num_u1-1,:) = 0.0
 
     !Need to shift e's to all grid lvls with e1 and e2
     !need e1 at e2 locations (e2 is not on boundaries)
-    Av_esup1 = (cshift(esup1,shift=-1,dim=1) + cshift(esup1,shift=1,dim=1))/2
+    !av_esup1 = (cshift(esup1,shift=-1,dim=1) + cshift(esup1,shift=1,dim=1))/2
     !Inner L shells is not required here (cleaning up from shifts)
-    Av_esup1(0,:) = 0.0
+    !Av_esup1(0,:) = 0.0
     !Outer L shells is not required here (cleaning up from shifts)
-    Av_esup1(Num_u1-1,:)= 0.0
+    !Av_esup1(Num_u1-1,:)= 0.0
     !need e2 at e1 locations
-    Av_esup2 = (cshift(esup2,shift=-1,dim=1) + cshift(esup2,shift=1,dim=1))/2
+    !Av_esup2 = (cshift(esup2,shift=-1,dim=1) + cshift(esup2,shift=1,dim=1))/2
     !Inner L shells PEC BC so Esup2 is zero
-    Av_esup2(0,:) = 0.0
+    !Av_esup2(0,:) = 0.0
     !Outer L shells (equivalent to De2du1 = 0)
-    Av_esup2(Num_u1-1,:)= esup2(Num_u1-2,:)
+    !Av_esup2(Num_u1-1,:)= esup2(Num_u1-2,:)
 
+    !$OMP DO PRIVATE(kk)
+      do kk=0,nz,2
+        av_esup1(oddx,kk)=0.5*(esup1(oddxp,kk)+esup1(oddxm,kk))
+        av_esup2(evenx,kk)=0.5*(esup2(evenxp,kk)+esup2(evenxm,kk))
+        av_f1(oddx,kk)=0.5*(f1(oddxp,kk)+f1(oddxm,kk))
+        av_f2(evenx,kk)=0.5*(f2(evenxp,kk)+f2(evenxm,kk))
+      enddo
+    !$OMP END DO
+    !$OMP SINGLE
+      av_esup1(0,:)=0.0
+      av_esup2(0,:)=0.0
+      av_esup1(num_u1-1,:)=0.0
+      av_esup2(num_u1-1,:)=0.0
+      av_f1(0,:)=0.0
+      av_f2(0,:)=0.0
+      av_f1(num_u1-1,:)=0.0
+      av_f2(num_u1-1,:)=0.0
+    !$OMP END SINGLE
     !advance eperp
     esup1 = (e1e1*   esup1 + e1e2*Av_esup2 + e1f1*   f1 + e1f2*Av_f2)
     esup2 = (e2e1*Av_esup1 + e2e2*   esup2 + e2f1*Av_f1 + e2f2*   f2)
+
+    !$OMP DO PRIVATE(kk)
+      do kk=0,nz,2
+        esup1(evenx,kk)=e1e1(evenx,kk)*esup1(evenx,kk)+&
+                        e1e2(evenx,kk)*av_esup2(evenx,kk)+&
+                        e1f1(evenx,kk)*f1(evenx,kk)+&
+                        e1f2(evenx,kk)*av_f2(evenx,kk)
+                      enddo
+    !$OMP END DO
+    !$OMP DO PRIVATE(kk)
+      do kk=0,nz,2
+        esup2(oddx,kk)= e2e1(oddx,kk)*esup1(oddx,kk)+&
+                        e2e2(oddx,kk)*esup2(oddx,kk)+&
+                        e2f1(oddx,kk)*f1(oddx,kk)+&
+                        e2f2(oddx,kk)*f2(oddx,kk)
+      enddo
+    !$OMP END DO
 
 
     !esup1[0,*] 			= (4.0*esup1(2,*) - esup1(4,*))/3.0					!Bob's fortran
     !esup1[num_u1-1,*] 	= (4.0*esup1(num_u1-3,*) - esup1(num_u1-5,*))/3.0	!Bob's fortran
 
     !need b3 at e3 (and b1) locations (not on any boundaries)
-    av_b3 = (cshift(cshift(b3,shift=-1,dim=2),shift=-1,dim=1) + &
-             cshift(cshift(b3,shift= 1,dim=2),shift=-1,dim=1) + &
-             cshift(cshift(b3,shift=-1,dim=2),shift= 1,dim=1) + &
-             cshift(cshift(b3,shift= 1,dim=2),shift= 1,dim=1))/4.0
-    Av_b3(:,0) = 0.0
-    Av_b3(:,Num_u3-1) = 0.0
-    Av_b3(0,:) = 0.0
-    Av_b3(Num_u1-1,:) = 0.0
+!    av_b3 = (cshift(cshift(b3,shift=-1,dim=2),shift=-1,dim=1) + &
+             !cshift(cshift(b3,shift= 1,dim=2),shift=-1,dim=1) + &
+             !cshift(cshift(b3,shift=-1,dim=2),shift= 1,dim=1) + &
+             !cshift(cshift(b3,shift= 1,dim=2),shift= 1,dim=1))/4.0
+    !Av_b3(:,0) = 0.0
+    !Av_b3(:,Num_u3-1) = 0.0
+    !Av_b3(0,:) = 0.0
+    !Av_b3(Num_u1-1,:) = 0.0
+
+    !$OMP DO PRIVATE(kk)
+      do kk=1,nz-1,2
+        av_b3(oddx,kk)=0.25*(b3(oddxp,kk+1)+b3(oddxp,kk-1)+&
+                          b3(oddxm,kk+1)+b3(oddxm,kk-1))
+      enddo
+    !$OMP END DO
+
+    !$OMP SINGLE
+      Av_b3(:,0) = 0.0
+      Av_b3(:,Num_u3-1) = 0.0
+      Av_b3(0,:) = 0.0
+      Av_b3(Num_u1-1,:) = 0.0
+    !$OMP END SINGLE
 
     !Need to put the db2du3 derivatives on the right grid point
     !for a yee grid and the fact we have a non orthognal system
-    db2_d3 = (b2p3-b2m3)
+    !db2_d3 = (b2p3-b2m3)
+
+    !$OMP DO PRIVATE(ii)
+      do ii = 0,nx,2
+        db2_d3(ii,evenz) = b2(ii,evenzp)-b2(ii,evenzm)
+      end do
+    !$OMP END DO
+
+    !$OMP SINGLE
+      db2_d3(:,0) = 0.0
+      db2_d3(:,Num_u3-1) = 0.0
+      db2_d3(0,:) = 0.0
+      db2_d3(Num_u1-1,:) = 0.0
+    !$OMP END SINGLE
 
     !Clean up after shifts (not on any boundaries)
-    db2_d3(:,0) = 0.0
-    db2_d3(:,Num_u3-1) = 0.0
-    db2_d3(0,:) = 0.0
-    db2_d3(Num_u1-1,:) = 0.0
+!    db2_d3(:,0) = 0.0
+    !db2_d3(:,Num_u3-1) = 0.0
+    !db2_d3(0,:) = 0.0
+    !db2_d3(Num_u1-1,:) = 0.0
 
-    av_db2_d3 = (cshift(cshift(db2_d3,shift=-1,dim=2),shift=-1,dim=1) + &
-                 cshift(cshift(db2_d3,shift= 1,dim=2),shift=-1,dim=1) + &
-                 cshift(cshift(db2_d3,shift=-1,dim=2),shift= 1,dim=1) + &
-                 cshift(cshift(db2_d3,shift= 1,dim=2),shift= 1,dim=1))/4.0
+!    av_db2_d3 = (cshift(cshift(db2_d3,shift=-1,dim=2),shift=-1,dim=1) + &
+                 !cshift(cshift(db2_d3,shift= 1,dim=2),shift=-1,dim=1) + &
+                 !cshift(cshift(db2_d3,shift=-1,dim=2),shift= 1,dim=1) + &
+                 !cshift(cshift(db2_d3,shift= 1,dim=2),shift= 1,dim=1))/4.0
 
-    Av_db2_d3(:,1) =        (cshift(db2_d3(:,2),shift=1) + &
-                             cshift(db2_d3(:,2),shift=-1))/2.0
+    !Av_db2_d3(:,1) =        (cshift(db2_d3(:,2),shift=1) + &
+                             !cshift(db2_d3(:,2),shift=-1))/2.0
 
-    Av_db2_d3(:,Num_u3-2) = (cshift(db2_d3(:,Num_u3-3),shift=1) + &
-                             cshift(db2_d3(:,Num_u3-3),shift=-1))/2.0
+    !Av_db2_d3(:,Num_u3-2) = (cshift(db2_d3(:,Num_u3-3),shift=1) + &
+                             !cshift(db2_d3(:,Num_u3-3),shift=-1))/2.0
+    !$OMP DO PRIVATE(kk)
+    do kk=2,nz-2,2
+      av_db2_d3(oddx,kk)=0.25*(db2_d3(oddxp,kk+1)+db2_d3(oddxp,kk-1)+&
+                        db2_d3(oddxm,kk+1)+db2_d3(oddxm,kk-1))
+    end do
+    !$OMP END DO
 
-    !Clean up after shifts (not on any boundaries)
-    Av_db2_d3(:,0) = 0.0
-    Av_db2_d3(:,Num_u3-1) = 0.0
-    Av_db2_d3(0,:) = 0.0
-    Av_db2_d3(Num_u1-1,:) = 0.0
+    !$OMP SINGLE
+      Av_db2_d3(:,1) =        (cshift(db2_d3(:,2),shift=1) + &
+                              cshift(db2_d3(:,2),shift=-1))/2.0
+
+      Av_db2_d3(:,Num_u3-2) = (cshift(db2_d3(:,Num_u3-3),shift=1) + &
+                              cshift(db2_d3(:,Num_u3-3),shift=-1))/2.0
+
+      !Clean up after shifts (not on any boundaries)
+      Av_db2_d3(:,0) = 0.0
+      Av_db2_d3(:,Num_u3-1) = 0.0
+      Av_db2_d3(0,:) = 0.0
+      Av_db2_d3(Num_u1-1,:) = 0.0
+    !$OMP END SINGLE
 
     !advance eparallel
-    e3 = e3b21*(b2p1-b2m1) + e3b23*(Av_db2_d3) + e3b1*b1  + e3b3*Av_b3
+    !$OMP DO PRIVATE(kk)
+      do kk=2,nz-2,2
+        e3(oddx,kk) = e3b21(oddx,kk)*b1(oddx,kk)+&
+                      e3b23(oddx,kk)*(Av_db2_d3(oddx,kk))+&
+                      e3b1(oddx,kk)*b1(oddx,kk)+&
+                      e3b3(oddx,kk)*Av_b3(oddx,kk)
+      end do
+    !$OMP END DO
+   
+    !$OMP SINGLE
     !Clean up after shifts (not on any boundaries)
-    e3(0,:) = 0.0
-    e3(num_u1-1,:) = 0.0
-    e3(:,0) = 0.0
-    e3(:,Num_u3-1) = 0.0
+      e3(0,:) = 0.0
+      e3(num_u1-1,:) = 0.0
+      e3(:,0) = 0.0
+      e3(:,Num_u3-1) = 0.0
+    !$OMP END SINGLE
 
     !killing eparallel for testing
     !e3[*,*] =0.0d0
@@ -279,15 +526,28 @@ subroutine iterate()
     !Av_esup1(0,*)	= 0.0 		& 	Av_esup1(Num_u1-1,*)	= 0.0
 
     !may need to do ionospheric sheet!
-    av_e3 = (cshift(cshift(e3,shift=-1,dim=2),shift=-1,dim=1) + &
-             cshift(cshift(e3,shift= 1,dim=2),shift=-1,dim=1) + &
-             cshift(cshift(e3,shift=-1,dim=2),shift= 1,dim=1) + &
-             cshift(cshift(e3,shift= 1,dim=2),shift= 1,dim=1))/4.0
+!    av_e3 = (cshift(cshift(e3,shift=-1,dim=2),shift=-1,dim=1) + &
+             !cshift(cshift(e3,shift= 1,dim=2),shift=-1,dim=1) + &
+             !cshift(cshift(e3,shift=-1,dim=2),shift= 1,dim=1) + &
+             !cshift(cshift(e3,shift= 1,dim=2),shift= 1,dim=1))/4.0
 
-    Av_e3(:,0) = 0.0
-    Av_e3(:,Num_u3-1) = 0.0
-    Av_e3(0,:) = 0.0
-    Av_e3(Num_u1-1,:) = 0.0
+    !Av_e3(:,0) = 0.0
+    !Av_e3(:,Num_u3-1) = 0.0
+    !Av_e3(0,:) = 0.0
+    !Av_e3(Num_u1-1,:) = 0.0
+    !$OMP DO PRIVATE(kk)
+      do kk=2,nz-2,2
+        av_e3(evenx,kk)=0.25*(e3(evenxp,kk+1)+e3(evenxp,kk-1)+&
+                              e3(evenxm,kk+1)+e3(evenxm,kk-1))
+      enddo
+    !$OMP END DO
+    !$OMP SINGLE
+      Av_e3(:,0) = 0.0
+      Av_e3(:,Num_u3-1) = 0.0
+      Av_e3(0,:) = 0.0
+      Av_e3(Num_u1-1,:) = 0.0
+    !$OMP END SINGLE
+    !$OMP END PARALLEL
 
     !rotate to ei
     e1 = e1esup1*esup1 + e1e3*Av_e3
