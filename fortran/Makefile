@@ -26,8 +26,8 @@ OBJECTS = ${OBJ}/global.o\
 COMP = ifort
 
 #Define Switches
-SWITCH = -O2 -module ${MOD} -openmp
-#SWITCH = -g -debug-parameters -module ${MOD} -openmp#-check all
+#SWITCH = -O2 -module ${MOD} -openmp
+SWITCH = -g -debug-parameters -module ${MOD} -openmp#-check all
 
 #Define Libraries
 LIB_DIR = -L lib/ifort

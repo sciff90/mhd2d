@@ -260,7 +260,7 @@ subroutine iterate()
     !Av_bsup3(Num_u1-1,:) = 0.0
     !$OMP DO PRIVATE(kk)
       do kk=1,nz-1,2
-        bsup3(oddx,kk)=0.25*( bsup3(oddxp,kk+1)+bsup3(oddxm,kk+1)+&
+        av_bsup3(oddx,kk)=0.25*( bsup3(oddxp,kk+1)+bsup3(oddxm,kk+1)+&
                               bsup3(oddxp,kk-1)+bsup3(oddxm,kk-1))
       enddo
     !$OMP END DO
@@ -398,8 +398,8 @@ subroutine iterate()
       av_f2(num_u1-1,:)=0.0
     !$OMP END SINGLE
     !advance eperp
-    esup1 = (e1e1*   esup1 + e1e2*Av_esup2 + e1f1*   f1 + e1f2*Av_f2)
-    esup2 = (e2e1*Av_esup1 + e2e2*   esup2 + e2f1*Av_f1 + e2f2*   f2)
+    !esup1 = (e1e1*   esup1 + e1e2*Av_esup2 + e1f1*   f1 + e1f2*Av_f2)
+    !esup2 = (e2e1*Av_esup1 + e2e2*   esup2 + e2f1*Av_f1 + e2f2*   f2)
 
     !$OMP DO PRIVATE(kk)
       do kk=0,nz,2
@@ -407,13 +407,13 @@ subroutine iterate()
                         e1e2(evenx,kk)*av_esup2(evenx,kk)+&
                         e1f1(evenx,kk)*f1(evenx,kk)+&
                         e1f2(evenx,kk)*av_f2(evenx,kk)
-                      enddo
+      enddo
     !$OMP END DO
     !$OMP DO PRIVATE(kk)
       do kk=0,nz,2
-        esup2(oddx,kk)= e2e1(oddx,kk)*esup1(oddx,kk)+&
+        esup2(oddx,kk)= e2e1(oddx,kk)*av_esup1(oddx,kk)+&
                         e2e2(oddx,kk)*esup2(oddx,kk)+&
-                        e2f1(oddx,kk)*f1(oddx,kk)+&
+                        e2f1(oddx,kk)*av_f1(oddx,kk)+&
                         e2f2(oddx,kk)*f2(oddx,kk)
       enddo
     !$OMP END DO
@@ -502,8 +502,8 @@ subroutine iterate()
 
     !advance eparallel
     !$OMP DO PRIVATE(kk)
-      do kk=2,nz-2,2
-        e3(oddx,kk) = e3b21(oddx,kk)*b1(oddx,kk)+&
+      do kk=1,nz-1,2
+        e3(oddx,kk) = e3b21(oddx,kk)*(b2(oddxp,kk)-b2(oddxm,kk))+&
                       e3b23(oddx,kk)*(Av_db2_d3(oddx,kk))+&
                       e3b1(oddx,kk)*b1(oddx,kk)+&
                       e3b3(oddx,kk)*Av_b3(oddx,kk)
@@ -537,11 +537,13 @@ subroutine iterate()
     !Av_e3(Num_u1-1,:) = 0.0
     !$OMP DO PRIVATE(kk)
       do kk=2,nz-2,2
-        av_e3(evenx,kk)=0.25*(e3(evenxp,kk+1)+e3(evenxp,kk-1)+&
-                              e3(evenxm,kk+1)+e3(evenxm,kk-1))
+        av_e3(evenx,kk)=0.25*(e3(evenxp,kk+1)+e3(evenxm,kk-1)+&
+                              e3(evenxp,kk-1)+e3(evenxm,kk+1))
       enddo
     !$OMP END DO
     !$OMP SINGLE
+      av_e3(oddx,:)=0.0
+      av_e3(evenx,oddz)=0.0
       Av_e3(:,0) = 0.0
       Av_e3(:,Num_u3-1) = 0.0
       Av_e3(0,:) = 0.0
