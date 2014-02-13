@@ -17,6 +17,7 @@ OBJECTS = ${OBJ}/global.o\
 					${OBJ}/get_basisfn.o\
 					${OBJ}/iterate.o\
 					${OBJ}/get_driver.o\
+					${OBJ}/write_params.o\
 					${OBJ}/main.o
 
 
@@ -84,6 +85,9 @@ ${OBJ}/iterate.o: ${SRC}/iterate.f90 ${OBJ}/get_driver.o ${OBJ}/global.o
 
 ${OBJ}/get_driver.o: ${SRC}/get_driver.f90 ${OBJ}/global.o
 	$(COMP) -c $(SWITCH) ${SRC}/get_driver.f90 -o ${OBJ}/get_driver.o
+
+${OBJ}/write_params.o: ${SRC}/write_params.f90 ${OBJ}/global.o
+	$(COMP) -c $(SWITCH) ${SRC}/write_params.f90 -o ${OBJ}/write_params.o
 
 DIR:
 	mkdir -p $(OBJ) $(DATA) $(PLOTS) $(MOD)

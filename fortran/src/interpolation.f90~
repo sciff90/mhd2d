@@ -8,8 +8,8 @@ contains
 !Y is the output array
 subroutine quad_inter(V,X,U,Y)
     implicit none
-    real,dimension(:) :: U,X,V,Y
-    real:: A,B,C,a0,a1,a2    !Y = A*x^2 + B*x +C
+    double precision,dimension(:) :: U,X,V,Y
+    double precision:: A,B,C,a0,a1,a2    !Y = A*x^2 + B*x +C
 
     !Counters
     integer ii,jj,kk;

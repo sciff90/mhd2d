@@ -3,9 +3,9 @@ subroutine get_facts
     implicit none
 
     !arrays
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: sigp_eps_arr,sigh_eps_arr
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: esig_arr,esig2_arr,csig_arr,csig2_arr
-    real,dimension(0:num_u1-1,0:Num_u3-1) :: ssig_arr,ssig2_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: sigp_eps_arr,sigh_eps_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: esig_arr,esig2_arr,csig_arr,csig2_arr
+    double precision,dimension(0:num_u1-1,0:Num_u3-1) :: ssig_arr,ssig2_arr
 
     !variables
 

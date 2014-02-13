@@ -8,8 +8,8 @@ module vector_operations
   !Function to square each element of the array, basic example
   function sq_elems(x) result(y)
     implicit none
-    real,intent(in)  :: x(:)
-    real,dimension(lbound(x,dim=1):ubound(x,dim=1)) :: y
+    double precision,intent(in)  :: x(:)
+    double precision,dimension(lbound(x,dim=1):ubound(x,dim=1)) :: y
 
     y = x**2
   end function
@@ -18,8 +18,8 @@ module vector_operations
   !Function to perform mat_mul on rowxcolumn
   function matmul_GDS(a,b) result(c)
     implicit none
-    real,intent(in) :: a(:),b(:)
-    real,dimension( lbound(b,dim=1):ubound(b,dim=1),&
+    double precision,intent(in) :: a(:),b(:)
+    double precision,dimension( lbound(b,dim=1):ubound(b,dim=1),&
                                 lbound(a,dim=1):ubound(a,dim=1)) :: c
     integer :: ii,jj
 
@@ -35,8 +35,8 @@ module vector_operations
   !Function to give a cumulative sum of a 1D array
   function sum_cumulative(x) result(y)
     implicit none
-    real,intent(in)  :: x(:)
-    real,dimension(lbound(x,dim=1):ubound(x,dim=1)) :: y
+    double precision,intent(in)  :: x(:)
+    double precision,dimension(lbound(x,dim=1):ubound(x,dim=1)) :: y
 
     integer :: ii
     y(lbound(x,dim=1)) = x(lbound(x,dim=1))

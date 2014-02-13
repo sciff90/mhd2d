@@ -9,6 +9,7 @@ program main
        call get_va()
        call get_facts()
        call get_basisfn()
+       call write_params()
        call iterate()
 
        write (*, *) "Program finished in",total
