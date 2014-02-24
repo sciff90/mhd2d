@@ -1,0 +1,143 @@
+ Number of cells =          371  rtop =    6.000000    
+ Grid Generation Finished!!!
+ dtx =   6.7853450E-04
+ dty=   1.3785053E-02
+ dtz =   7.5482458E-05
+ min(Va_arr) =   5.0585777E-02
+ max(Va_arr) =    17.53230    
+ Min spacing in u1 =    31118.15     m
+ Min spacing in u3 =    2402.684     m
+ Max Va =   1.1182778E+08 m/s
+ ******************************************
+ Total Simulation Time,tmax =    1200.000    
+ Time steps =   4.3312000E-05
+ Number of time loops =   2.7705948E+07
+ Max Cour_len u1 =   0.1085139      at i1x,i1z =          128           0
+ Max Cour_len u3 =   0.9754639      at i3x,i3z =          124           0
+ num_u1 x nzp1 x nt =   1.5521149E+12
+ Max travel time between grid points u1,u3 directions =    4.786219    
+   6.744101    
+ ****************************************************
+ Get Va Complete...
+ number of basis functions generated =           29
+ Calculating Inverse...
+ Matrix Inversion Completed...
+ done
+ File Written to:
+ ./data/run_parameters.dat                                                      
+                      
+ Starting Time Loop
+ File Written to:
+ ./data/plot_data0001.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0002.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0003.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0004.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0005.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0006.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0007.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0008.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0009.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0010.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0011.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0012.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0013.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0014.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0015.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0016.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0017.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0018.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0019.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0020.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0021.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0022.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0023.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0024.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0025.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0026.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0027.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0028.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0029.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0030.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0031.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0032.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0033.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0034.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0035.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0036.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0037.dat                                                       
+                      
+ File Written to:
+ ./data/plot_data0038.dat                                                       
+                      
