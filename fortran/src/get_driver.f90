@@ -1,15 +1,15 @@
-subroutine get_driver(tt,u3,driver)
+subroutine get_driver(tt,u3_in,driver)
   use global
   implicit none
 
-  double precision :: tt
-  double precision,dimension(:),intent(in) :: u3
-  double precision,dimension(0:num_u3-1),intent(out) :: driver
+  real :: tt
+  real,dimension(:),intent(in) :: u3_in
+  real,dimension(0:num_u3-1),intent(out) :: driver
 
   !Local Definitions
-  double precision :: amp,half_width,omega,width,carr,Env
-  double precision :: dnorm,decay,tdep
-  double precision,dimension(0:num_u3-1) :: z,spatial
+  real :: amp,half_width,omega,width,carr,Env
+  real :: dnorm,decay,tdep
+  real,dimension(0:num_u3-1) :: z,spatial
 
   !Amplitude
   !Convert tesla into model scaled units

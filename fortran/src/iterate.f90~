@@ -3,22 +3,22 @@ subroutine iterate()
   implicit none
 
   !Initialize Arrays
-  complex,dimension(0:num_u1-1,0:num_u3-1) :: e1,e2,e3,b1,b2,b3
-  complex,dimension(0:num_u1-1,0:num_u3-1) :: esup1,esup2,bsup1,bsup2,bsup3
-  real,dimension(0:num_u1-1,0:num_u3-1) :: cfac
-  complex,dimension(0:num_u1-1) :: odds_u1,evens_u1
-  complex,dimension(0:num_u3-1) :: odds_u3,evens_u3
-  real,dimension(0:num_u3-1) :: u3_in,driver
+  complex*16,dimension(0:num_u1-1,0:num_u3-1) :: e1,e2,e3,b1,b2,b3
+  complex*16,dimension(0:num_u1-1,0:num_u3-1) :: esup1,esup2,bsup1,bsup2,bsup3
+  double precision,dimension(0:num_u1-1,0:num_u3-1) :: cfac
+  complex*16,dimension(0:num_u1-1) :: odds_u1,evens_u1
+  complex*16,dimension(0:num_u3-1) :: odds_u3,evens_u3
+  double precision,dimension(0:num_u3-1) :: u3_in,driver
   integer,dimension(0:num_u1/2) :: Eidx
   integer,dimension(0:num_u1/2-1) :: Oidx
 
-  complex,dimension(0:num_u1-1,0:num_u3-1) :: e1p3,e1m3,e2p1,e2m1,e2p3,&
+  complex*16,dimension(0:num_u1-1,0:num_u3-1) :: e1p3,e1m3,e2p1,e2m1,e2p3,&
     e2m3,e3p1,e3m1,av_bsup1,av_bsup3,b2m3,b3p1,b3m1,b1p3,b1m3,b2p1,b2m1,b2p3
-  complex,dimension(0:num_u1-1,0:num_u3-1)::  f1,av_f1,f2,av_f2,av_b3,av_esup1,av_esup2,av_e3,&
+  complex*16,dimension(0:num_u1-1,0:num_u3-1)::  f1,av_f1,f2,av_f2,av_b3,av_esup1,av_esup2,av_e3,&
     bnu_M,bph_M,bmu_M,enu_M,eph_M,emu_M
-  complex,allocatable,dimension(:,:) :: db2_d3,av_db2_d3
-  complex,dimension(0:num_u1/2) :: bsup3_n,bsup3_s
-  complex,dimension(0:num_u1-1) :: psiatm_N,psiatmp,psiatmm,b1atm_N,&
+  complex*16,allocatable,dimension(:,:) :: db2_d3,av_db2_d3
+  complex*16,dimension(0:num_u1/2) :: bsup3_n,bsup3_s
+  complex*16,dimension(0:num_u1-1) :: psiatm_N,psiatmp,psiatmm,b1atm_N,&
     b2atm_N,b1_N,b2_N,b1dif_N,b2dif_N,b2atm_S,b1_S,b2_S,b1dif_S,b2dif_S,&
     psiatm_S,b1atm_s,psig,psigp,psigm,bxg_N,bxg_S,byg_N,byg_S
 
@@ -26,7 +26,7 @@ subroutine iterate()
   !Counters
   integer*4 :: ii,jj,kk,tpnext
   integer*4 :: iplot,nplots
-  real :: tt
+  double precision :: tt
   integer :: reclength
 
   !Strings
@@ -674,13 +674,13 @@ subroutine extrap_1D(array,grid,location)
   use global
   implicit none
   integer :: location
-  real,dimension(0:num_u1-1),intent(in) :: grid
-  complex,dimension(0:num_u1-1) :: array
+  double precision,dimension(0:num_u1-1),intent(in) :: grid
+  complex*16,dimension(0:num_u1-1) :: array
 
   integer :: min_idx_array,max_idx_array,min_idx_grid,max_idx_grid
 
-  real :: hh,hh1
-  complex :: fir_d,sec_d
+  double precision :: hh,hh1
+  complex*16 :: fir_d,sec_d
   min_idx_array = 0
   max_idx_array = num_u1-1
   min_idx_grid = 0

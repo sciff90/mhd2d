@@ -4,57 +4,56 @@ subroutine get_Va()
         implicit none
 
         !arrays
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: rho,Va,No_E,No_F1,No_F2,No_Mag,LVal_arr
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: Lat,b0,nH_eq,rho_mag,No_tot,Rho_a
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: omega_p,omega_e
-        double precision,dimension(0:num_u1-1):: xd,tanhm,tterm,va_sp,b_eq,nH
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: Ne_cc,Nu_ei,Nu_en,Nu_in,Nu_e,Nu_i,lambda
-        double precision,dimension(0:num_u1-1) :: Thick_Sd,Thick_Sh,Thick_Sp
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: V_arr,Coll_Mod,Eperp,Wave_sp,Va_arr
-        double precision,dimension(0:num_u1-1,0:Num_u3-1) :: courx,courz
+        real,dimension(0:num_u1-1,0:num_u3-1) :: rho,Va,No_E,No_F1,No_F2,No_Mag,LVal_arr
+        real,dimension(0:num_u1-1,0:num_u3-1) :: Lat,b0,nH_eq,rho_mag,No_tot
+        real,dimension(0:num_u1-1,0:num_u3-1) :: omega_p,omega_e
+        real,dimension(0:num_u1-1):: xd,tanhm,tterm,va_sp,b_eq,nH
+        real,dimension(0:num_u1-1,0:num_u3-1) :: Ne_cc,Nu_ei,Nu_en,Nu_in,Nu_e,Nu_i,lambda
+        real,dimension(0:num_u1-1) :: Thick_Sd,Thick_Sh,Thick_Sp
+        real,dimension(0:num_u1-1,0:num_u3-1) :: V_arr,Coll_Mod,Eperp,Wave_sp
+        real,dimension(0:num_u1-1,0:Num_u3-1) :: courx,courz
         integer,dimension(0:1) :: i_loc
-        !double precision,dimension(0:num_u1-1,0:7) :: flr_a
+        !real,dimension(0:num_u1-1,0:7) :: flr_a
 
-        double precision,dimension(0:num_u1-1) :: cosalpha_N,sin2alpha_N,cosalpha_S,sin2alpha_S
-        double precision,dimension(0:num_u1-1) :: musigp,musigh,musig0,musigzz
-        double precision,dimension(0:num_u1-1) :: sigtt,sigtp,sigpt,sigpp
-        double precision,dimension(0:num_u1-1) :: sig11,sig12,sig21,sig22,sigden
+        real,dimension(0:num_u1-1) :: cosalpha_N,sin2alpha_N,cosalpha_S,sin2alpha_S
+        real,dimension(0:num_u1-1) :: musigp,musigh,musig0,musigzz
+        real,dimension(0:num_u1-1) :: sigtt,sigtp,sigpt,sigpp
+        real,dimension(0:num_u1-1) :: sig11,sig12,sig21,sig22,sigden
 
         !Ionospheric Data File Arrays
-        double precision,dimension(0:num_u1-1,0:num_u3-1) :: No_N,Mav,Temp
-        complex*16,dimension(0:num_u1-1) :: sigpatm_N,sighatm_N,sig0atm_N
-        complex*16,dimension(0:num_u1-1) :: sigpatm_S,sighatm_S,sig0atm_S
-
+        real,dimension(0:num_u1-1,0:num_u3-1) :: No_N,Mav,Temp
 
         !Data File Variables
         integer,parameter :: pt = 29
-        double precision,dimension(0:pt+5,0:3):: neutral
+        real,dimension(0:pt+5,0:3):: neutral
 
-        double precision::SclHt
+        real::SclHt,ns_scale
 
         !Parameters
-         double precision,parameter:: Eregion = 100e3
-         double precision,parameter:: Mol_H = 1.0e-3
-         double precision,parameter:: Av_n = 6.023e23
-         double precision,parameter:: Mp = 1.67e-27
-         double precision,parameter:: Me = 9.109e-31
-         double precision,parameter:: q_i = 1.602e-19
-         double precision,parameter:: q_e = -1.602e-19
-         double precision,parameter:: k_0 = 8.0e15
+         real,parameter:: Eregion = 100e3
+         real,parameter:: Mol_H = 1.0e-3
+         real,parameter:: Av_n = 6.023e23
+         real,parameter:: Mp = 1.67e-27
+         real,parameter:: Me = 9.109e-31
+         real,parameter:: q_i = 1.602e-19
+         real,parameter:: q_e = -1.602e-19
+         real,parameter:: k_0 = 8.0e15
 
          !Counters
          integer::ii,jj
 
          !Variables
-         double precision :: Plaw,Ne_E,Alt_E,Esht_t,Esht_b,Ne_F1,Alt_F1,F1sht_t,F1sht_b
-         double precision :: Ne_F2,Alt_F2,F2sht_t,F2sht_b,X
-         double precision :: Scale_Sd,Scale_Sh,Scale_Sp,Tol,dtx,dtz,dty
-         double precision :: nt,dtxmax,dtzmax,cmax,cmaz,musigfac
+         real :: Plaw,Ne_E,Alt_E,Esht_t,Esht_b,Ne_F1,Alt_F1,F1sht_t,F1sht_b
+         real :: Ne_F2,Alt_F2,F2sht_t,F2sht_b,X
+         real :: Scale_Sd,Scale_Sh,Scale_Sp,Tol,dtx,dtz,dty
+         real :: dtxmax,dtzmax,cmax,cmaz,musigfac
          integer :: i1x,i1z,i3x,i3z
 
          !Allocations
          allocate(eps_arr(0:num_u1-1,0:Num_u3-1))
          allocate(va2_arr(0:num_u1-1,0:Num_u3-1))
+         allocate(va_arr(0:num_u1-1,0:Num_u3-1))
+         allocate(rho_a(0:num_u1-1,0:Num_u3-1))
          allocate(e1b1atm_N(0:num_u1-1))
          allocate(e1b1atm_S(0:num_u1-1))
          allocate(e1b2atm_N(0:num_u1-1))
@@ -63,6 +62,12 @@ subroutine get_Va()
          allocate(e2b1atm_S(0:num_u1-1))
          allocate(e2b2atm_N(0:num_u1-1))
          allocate(e2b2atm_S(0:num_u1-1))
+         allocate(sigpatm_N(0:num_u1-1))
+         allocate(sighatm_N(0:num_u1-1))
+         allocate(sig0atm_N(0:num_u1-1))
+         allocate(sigpatm_S(0:num_u1-1))
+         allocate(sighatm_S(0:num_u1-1))
+         allocate(sig0atm_S(0:num_u1-1))
          !Magnetic Field Strength
          do ii = 0, num_u3-1
                  Lval_arr(:,ii) = x_arr(:,num_u3_half)
@@ -85,12 +90,18 @@ subroutine get_Va()
                  nH_eq(:,ii) = nH
          end do
 
-         Plaw = 4.0     !Power law of density profile
+         Plaw = 1.0     !Power law of density profile
          rho_mag = nH_eq*(Lval_arr/r_arr)**Plaw
          No_Mag = rho_mag/mp !Number of electrons and protons in magnetosphere
+         
 
          do ii = 0, num_u1-1
                 do jj = 0, num_u3-1
+                        if (jj>num_u3_half) then
+                          ns_scale=0.1
+                        else
+                          ns_scale=1.0
+                        end if
                         !E Region
                         Ne_E = 1.5e11   !Numbeer of electron at E Region peek
                         Alt_E = Eregion !Altitude of e region max
@@ -104,7 +115,7 @@ subroutine get_Va()
                         if (z_arr(ii,jj) .le. Alt_E) then
                                 X = (z_arr(ii,jj)-Alt_E)/Esht_b
                         end if
-                        No_E(ii,jj) = Ne_E*exp(1.0-X-exp(-X))
+                        No_E(ii,jj) = Ne_E*exp(1.0-X-exp(-X))*ns_scale
 
                         !F1 Region
                         Ne_F1 = 2.5e11  !Number of electron at F1 peek (per m^3)
@@ -119,13 +130,13 @@ subroutine get_Va()
                         if (z_arr(ii,jj) .le. Alt_F1) then
                                 X = (z_arr(ii,jj)-Alt_F1)/F1sht_b
                         end if
-                        No_F1(ii,jj) = Ne_F1*exp(1.0-X-exp(-X))
+                        No_F1(ii,jj) = Ne_F1*exp(1.0-X-exp(-X))*ns_scale
 
                         !F2 Region
                         Ne_F2 = 2.0e12  !Number of electron at F1 peek (per m^3)
                         Alt_F2 = 350.0e3!Altitude of F1 region (in m)
                         F2sht_t = 175.0e3!Scale Height above F1 region (in m)
-                        F2sht_b = 75.0e3!Scale Height below F1 region (in m)
+                        F2sht_b = 75.0e3!Scalee Height below F1 region (in m)
 
                         if (z_arr(ii,jj) .gt. Alt_F2) then
                                 X = (z_arr(ii,jj)-Alt_F2)/F2sht_t
@@ -134,7 +145,7 @@ subroutine get_Va()
                         if (z_arr(ii,jj) .le. Alt_F2) then
                                 X = (z_arr(ii,jj)-Alt_F2)/F2sht_b
                         end if
-                        No_F2(ii,jj) = Ne_F2*exp(1.0-X-exp(-X))
+                        No_F2(ii,jj) = Ne_F2*exp(1.0-X-exp(-X))*ns_scale
 
                 end do
            end do
@@ -256,7 +267,7 @@ subroutine get_Va()
 
 
            !!Height Distributed Conductivity Arrays (set to zero if thin sheet is only required)
-           !sigp_arr[*,*]= 0.0
+           !sigp_arr[:,:]= 0.0
            !sigh_arr[*,*]= 0.0
            !sigh_arr[0,*]= 0.0          !Sets inner L shells Sigma_h to zero -> no mode conversion
            !sigh_arr[Num_u1-1,*]= 0.0   !Sets inner L shells Sigma_h to zero -> no mode conversion

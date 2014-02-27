@@ -3,17 +3,17 @@ subroutine get_basisfn()
     use vector_operations
     implicit none
 
-    double precision,parameter :: scaleup = 4
+    real,parameter :: scaleup = 4
     integer,parameter :: NBsets = 1
     integer,parameter :: nmodes = int(num_u1*modefrac)
     integer,parameter :: nm = nmodes-1
 
     !arrays
-    double precision,dimension(0:num_u1-1,0:num_u1-3) :: evecs
-    double precision,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
-    double precision,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
-    double precision,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co,dufac
-    double precision,dimension(:,:),allocatable :: a,a2
+    real,dimension(0:num_u1-1,0:num_u1-3) :: evecs
+    real,dimension(0:num_u1-1,0:nmodes-1,0:nbsets-1)::ev_temp
+    real,dimension(0:nmodes-1,0:nbsets-1) :: evl_temp
+    real,dimension(:),allocatable :: u1_sc,d2co,d1co,d0co,dufac
+    real,dimension(:,:),allocatable :: a,a2
     integer,dimension(:),allocatable :: indx,index_array
 
     !counters
@@ -21,27 +21,27 @@ subroutine get_basisfn()
 
     !variables
     integer :: ixbc_0,ixbc_n,Npts,Ipts,max_index
-    double precision :: du1_sc,du1_2,du1_sq,p0,pn,normfac
+    real :: du1_sc,du1_2,du1_sq,p0,pn,normfac
     integer :: Mmax,Nmax,LWORK
 
     !Spepherical Harmonics
     integer :: n ,lda,ldvl,ldvr
     integer :: info,IFAIL,ERROR
-    double precision,dimension(:),allocatable :: rwork,wi,wr
-    double precision,dimension(:,:),allocatable :: vl,vr,evec
-    double precision,dimension(:),allocatable :: w,eval,temp_array
-    double precision,dimension(:),allocatable :: work
-    double precision :: ABNRM
-    double precision,dimension(:),allocatable :: rconde,rcondv,sc
+    real,dimension(:),allocatable :: rwork,wi,wr
+    real,dimension(:,:),allocatable :: vl,vr,evec
+    real,dimension(:),allocatable :: w,eval,temp_array
+    real,dimension(:),allocatable :: work
+    real :: ABNRM
+    real,dimension(:),allocatable :: rconde,rcondv,sc
     integer :: ilo,ihi
-    double precision,dimension(:,:),allocatable :: Ev,eve,evt,eveinv;
-    double precision,dimension(:),allocatable :: Evl,Ev2,nulm;
+    real,dimension(:,:),allocatable :: Ev,eve,evt,eveinv;
+    real,dimension(:),allocatable :: Evl,Ev2,nulm;
     integer,dimension(:),allocatable :: IPIV,iwork,Eidx,Oidx
 
     !Coefficient Arrays
-    double precision,dimension(:,:),allocatable :: b3coef,b3b3,psifaci,&
+    real,dimension(:,:),allocatable :: b3coef,b3b3,psifaci,&
       psifacg,psiicoef,psigcoef
-    double precision,dimension(:),allocatable :: nufacg,nufaci,nufac0,temp_trans
+    real,dimension(:),allocatable :: nufacg,nufaci,nufac0,temp_trans
 
     do sets = 0, nbsets-1
 
@@ -137,11 +137,11 @@ subroutine get_basisfn()
         end if
 
 
-        CALL dgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
+        CALL sgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
         LWORK = int(work(0))
         deallocate(work)
         allocate(work(0:lwork-1))
-        CALL dgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
+        CALL sgeevx('B','V', 'V','N', N, a, LDA, Wr,wi, VL,LDVL,VR, LDVR,ilo,ihi,sc,abnrm,rconde,rcondv,work, LWORK, iwork, INFO)
         IF( INFO.GT.0 ) THEN
            WRITE(*,*)'The algorithm failed to compute eigenvalues.'
         END IF
@@ -251,10 +251,10 @@ subroutine get_basisfn()
     allocate(WORK(0:LWORK-1))
 
     write(*,*) 'Calculating Inverse...'
-    call dgetrf(Mmax,Nmax,eveinv,LDA,IPIV,INFO)
+    call sgetrf(Mmax,Nmax,eveinv,LDA,IPIV,INFO)
 
     if (info.eq.0) then
-      call dgetri(Nmax,eveinv,LDA,IPIV,WORK,LWORK,INFO)
+      call sgetri(Nmax,eveinv,LDA,IPIV,WORK,LWORK,INFO)
     else
       write(*,*) 'The Factor U is Singular'
     end if
