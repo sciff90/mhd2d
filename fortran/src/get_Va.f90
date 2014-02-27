@@ -90,7 +90,7 @@ subroutine get_Va()
                  nH_eq(:,ii) = nH
          end do
 
-         Plaw = 1.0     !Power law of density profile
+         Plaw = 4.0     !Power law of density profile
          rho_mag = nH_eq*(Lval_arr/r_arr)**Plaw
          No_Mag = rho_mag/mp !Number of electrons and protons in magnetosphere
          
@@ -98,7 +98,7 @@ subroutine get_Va()
          do ii = 0, num_u1-1
                 do jj = 0, num_u3-1
                         if (jj>num_u3_half) then
-                          ns_scale=0.1
+                          ns_scale=1.0
                         else
                           ns_scale=1.0
                         end if
@@ -267,7 +267,7 @@ subroutine get_Va()
 
 
            !!Height Distributed Conductivity Arrays (set to zero if thin sheet is only required)
-           !sigp_arr[*,*]= 0.0
+           !sigp_arr[:,:]= 0.0
            !sigh_arr[*,*]= 0.0
            !sigh_arr[0,*]= 0.0          !Sets inner L shells Sigma_h to zero -> no mode conversion
            !sigh_arr[Num_u1-1,*]= 0.0   !Sets inner L shells Sigma_h to zero -> no mode conversion
